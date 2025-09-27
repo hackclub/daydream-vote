@@ -2,11 +2,11 @@
 
 <div class="main">
   <div class="card big">
-    <h1>Edit Project</h1>
+    <h1>Game Info</h1>
 
     <%= form_with model: @project, url: project_path, method: :patch, local: true, multipart: true, data: { turbo: false } do |form| %>
       <% if @project.errors.any? %>
-        <div>
+        <div class="error>
           <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
           <ul>
             <% @project.errors.full_messages.each do |message| %>
@@ -16,43 +16,52 @@
         </div>
       <% end %>
 
-      <div>
-        <%= form.label :title %>
-        <%= form.text_field :title %>
-      </div>
+      <div class="standard-form">
+        <div class="wide">
+          <%= form.label :title %>
+          <%= form.text_field :title, placeholder: "Game name" %>
+        </div>
 
-      <div>
-        <%= form.label :description %>
-        <%= form.text_area :description %>
-      </div>
+        <div class="wide">
+          <%= form.label :description %>
+          <%= form.text_area :description, placeholder: "A brief description of your game" %>
+        </div>
 
-      <div>
-        <%= form.label :itchio_url, "Itch.io URL" %>
-        <%= form.url_field :itchio_url %>
-      </div>
+        <div class="wide">
+          <%= form.label :itchio_url, "Itch.io URL" %>
+          <%= form.url_field :itchio_url, placeholder: "https://yourname.itch.io/game-name" %>
+        </div>
 
-      <div>
-        <%= form.label :repo_url, "Repository URL" %>
-        <%= form.url_field :repo_url %>
-      </div>
+        <div class="wide">
+          <%= form.label :repo_url, "Repository URL" %>
+          <%= form.url_field :repo_url, placeholder: "https://github.com/yourname/game-name" %>
+        </div>
 
-      <div>
-        <%= form.label :attending_event, "Which Daydream Event is this project for?" %>
-        <%= form.select :attending_event, 
-            options_for_select(
-              Project.attending_events.keys, 
-              @project.attending_event
-            ), 
-            { prompt: "Select an event..." } %>
-      </div>
+        <div class="wide">
+          <%= form.label :attending_event, "Which Daydream Event is this project for?" %>
+          <%= form.select :attending_event, 
+              options_for_select(
+                Project.attending_events.keys, 
+                @project.attending_event
+              ), 
+              { prompt: "Select an event..." } %>
+        </div>
 
-      <div>
-        <%= form.label :image, "Project Image" %>
-        <%= form.file_field :image %>
-      </div>
+        <div class="wide">
+          <%= form.label :image, "Project Image" %>
+          <%= form.file_field :image %>
+        </div>
 
-      <div>
-        <%= form.submit "Update Project" %>
+        <div
+          class="submit-wrapper"
+        >
+          <%= form.submit "Save & Continue", class: "submit-button-elem" %>
+          <img
+            src="/button-clouds.svg" 
+            alt="" 
+            class="submit-clouds"
+          >
+        </div>
       </div>
     <% end %>
   </div>

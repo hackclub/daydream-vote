@@ -301,7 +301,8 @@ hr {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 1rem 1rem;
-  max-width: 700px;
+  max-width: 500px;
+  width: 100vw;
 }
 .standard-form .wide {
   grid-column: span 6;
@@ -314,6 +315,7 @@ hr {
 }
 .standard-form label {
   display: block;
+  margin-bottom: 0.25rem;
 }
 .standard-form > div > * {
   width: 100%;
@@ -324,12 +326,12 @@ hr {
   font-family: 'Atkinson Hyperlegible';
   color: rgb(139, 69, 19);
 }
-.standard-form input, select {
+.standard-form input, .standard-form select, .standard-form textarea {
   border: 2px solid #f2e8ca;
   background-color: #fffef2;
   padding: 0.5rem 1rem;
+  resize: vertical /* textarea only */
 }
-
 .standard-form input[type="radio"],
 .standard-form input[type="checkbox"] {
   width: auto;
@@ -337,6 +339,44 @@ hr {
   padding: 0;
   vertical-align: middle;
   margin-block: 0.5rem;
+}
+
+.standard-form input[type="file"] {
+  position: relative;
+  padding: 3rem;
+  border: 2px dashed #D3B180;
+  background-color: #fffef2;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  transition: all 0.2s ease;
+}
+
+.standard-form input[type="file"]:hover {
+  border-color: #E472AB;
+  background-color: #fefbf5;
+}
+
+.standard-form input[type="file"]::file-selector-button {
+  display: none;
+}
+
+.standard-form input[type="file"]::before {
+  content: "+";
+  position: absolute;
+  font-size: 3rem;
+  font-weight: 300;
+  color: #D3B180;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.standard-form input[type="file"]:hover::before {
+  color: #E472AB;
 }
 
 .standard-form .radio-option,

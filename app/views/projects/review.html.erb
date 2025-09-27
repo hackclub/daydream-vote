@@ -6,7 +6,7 @@
     <div style="width: 800px;"></div>
 
       <% if @project.errors.any? %>
-        <div>
+        <div class="error">
           <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
           <ul>
             <% @project.errors.full_messages.each do |message| %>
