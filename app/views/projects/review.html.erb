@@ -39,8 +39,24 @@
           </p>
           -->
         </div>
+        
+        <div class="game-card-buttons">
+          <div class="submit-wrapper review-button">
+            <%= link_to "View on Itch.io", @project.itchio_url, target: "_blank", class: "submit-button-elem" %>
+            <img src="/button-clouds.svg" alt="" class="submit-clouds">
+          </div>
+          
+          <div class="submit-wrapper review-button">
+            <%= link_to "View Git Repository", @project.repo_url, target: "_blank", class: "submit-button-elem" %>
+            <img src="/button-clouds.svg" alt="" class="submit-clouds">
+          </div>
+        </div>
       </div>
     </div>
+
+    <p style="text-align: center; margin-top: -0.5rem; margin-bottom: 2rem; margin-inline: auto; max-width: 400px;">
+      This is exactly how your game will appear in <%= @project.attending_event.name.titleize %> voting <em>and</em> global voting.
+    </p>
 
     <div class="external-links">
       <span style="font-weight: bold">Git Repository:</span> <%= link_to @project.itchio_url, @project.itchio_url, target: "_blank", class: "pink-link" %>

@@ -1072,3 +1072,19 @@ html, body {
   max-width: 48rem;
   width: 100%;
 }
+
+.game-card-buttons > div {
+  margin: 0.5rem;
+  width: calc(100% - 1rem);
+}
+.game-card-buttons > div > a {
+  padding: 0.25rem 0.5rem !important;
+  font-size: 1rem !important;
+}
+.game-card-buttons > div > img {
+  scale: 140%;
+  translate: 10px
+}
+.game-card-buttons > div:nth-child(2) {
+  filter: grayscale(100%) brightness(80%) contrast(200%);
+}
