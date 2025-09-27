@@ -3,7 +3,6 @@ class ProfileDatum < ApplicationRecord
   
   encrypts :first_name
   encrypts :last_name
-  encrypts :dob
   encrypts :address_line_1
   encrypts :address_line_2
   encrypts :address_city
