@@ -289,8 +289,6 @@ hr {
     max-width: none;
   }
 }
-<<<<<<< HEAD
-=======
 
 .standard-form {
   display: grid;
@@ -391,4 +389,3 @@ hr {
   cursor: pointer;
   font-size: 1.5rem;
 }
->>>>>>> 24f39be (Edit page CSS + more reusables)
