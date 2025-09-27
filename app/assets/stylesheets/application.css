@@ -885,7 +885,7 @@ html, body {
   font-weight: 600;
   text-align: center;
   color: rgb(139, 69, 19);
-  margin-top: 2.5rem;
+  margin-top: 0.5rem;
   margin-bottom: 0;
   font-size: 1.1rem;
 }
@@ -894,7 +894,8 @@ html, body {
   text-align: center;
   color: rgb(139, 69, 19);
   opacity: 0.8;
-  margin-bottom: 2rem;
+  margin-top: -0.1rem;
+  margin-bottom: 2.5rem;
   font-size: 1.1rem;
 }
 

@@ -38,7 +38,7 @@
         </div>
 
         <div class="wide">
-          <%= form.label :attending_event, "Which Daydream Event is this project for?" %>
+          <%= form.label :attending_event, "Which daydream Event is this project for?" %>
           <%= form.collection_select :attending_event_id, Event.order(:name), :id, :name,
               { prompt: "Select an event...", selected: @project.attending_event_id } %>
         </div>
