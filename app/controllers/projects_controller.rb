@@ -10,6 +10,87 @@ class ProjectsController < ApplicationController
     @accepted_projects = current_user.projects.includes(:creator_positions)
   end
   
+  def invite_members
+    @project = current_user.projects.first
+    redirect_to edit_project_path unless @project
+  end
+  
+  def create_invite
+    @project = current_user.projects.first
+    redirect_to edit_project_path and return unless @project
+    
+    email = params[:email]&.strip&.downcase
+    
+    if email.blank?
+      flash[:alert] = "Email is required"
+      redirect_to projects_invite_members_path and return
+    end
+    
+    # Check if user is already a team member
+    if @project.users.joins(:creator_positions).where(users: { email: email }).exists?
+      flash[:alert] = "User is already a team member"
+      redirect_to projects_invite_members_path and return
+    end
+    
+    # Check if invite already exists
+    if @project.creator_position_invites.where(email: email).exists?
+      flash[:alert] = "Invite already sent to this email"
+      redirect_to projects_invite_members_path and return
+    end
+    
+    # Create the invite
+    invite = @project.creator_position_invites.create!(
+      email: email,
+      invited_by: current_user
+    )
+    
+    flash[:notice] = "Invite sent successfully to #{email}"
+    redirect_to projects_invite_members_path
+  rescue ActiveRecord::RecordInvalid => e
+    flash[:alert] = "Failed to send invite: #{e.message}"
+    redirect_to projects_invite_members_path
+  end
+  
+  def vote
+    # Get projects from users at the same event, excluding current user's projects
+    current_user_event = current_user.profile_datum&.attending_event
+    redirect_to edit_profile_path and return unless current_user_event
+    
+    # Find all users at the same event
+    users_at_event = User.joins(:profile_datum)
+                         .where(profile_data: { attending_event: current_user_event })
+    
+    # Get projects from those users, excluding ones current user is involved in
+    @projects = Project.joins(:creator_positions)
+                      .joins("JOIN users ON creator_positions.user_id = users.id")
+                      .joins("JOIN profile_data ON users.id = profile_data.user_id")
+                      .where(profile_data: { attending_event: current_user_event })
+                      .where.not(id: current_user.projects.pluck(:id))
+                      .distinct
+                      .includes(:users, :creator_positions)
+  end
+  
+  def delete_invite
+    @project = current_user.projects.first
+    redirect_to edit_project_path and return unless @project
+    
+    invite = @project.creator_position_invites.find(params[:invite_id])
+    
+    # Only the invite creator can delete the invite
+    unless invite.invited_by == current_user
+      flash[:alert] = "You can only delete invites you created"
+      redirect_to projects_invite_members_path and return
+    end
+    
+    invite.destroy!
+    
+    flash[:notice] = "Invite deleted successfully"
+    redirect_to projects_invite_members_path
+  rescue ActiveRecord::RecordNotFound
+    flash[:alert] = "Invite not found"
+    redirect_to projects_invite_members_path
+  end
+  
   def edit
   end
   
@@ -21,7 +102,7 @@ class ProjectsController < ApplicationController
         # Create the creator position as owner to associate user with project
         @project.creator_positions.create!(user: current_user, role: :owner)
         flash[:notice] = "Project created successfully"
-        redirect_to edit_project_path
+        redirect_to projects_invite_members_path
       else
         flash.now[:alert] = "Please fix the errors below"
         render :edit
@@ -29,7 +110,7 @@ class ProjectsController < ApplicationController
     else
       if @project.update(project_params)
         flash[:notice] = "Project updated successfully"
-        redirect_to edit_project_path
+        redirect_to projects_invite_members_path
       else
         flash.now[:alert] = "Please fix the errors below"
         render :edit
@@ -43,6 +124,14 @@ class ProjectsController < ApplicationController
     unless signed_in?
       flash[:alert] = "Please sign in first"
       redirect_to new_session_path
+    end
+  end
+  
+  def require_no_pending_invites
+    @project = current_user.projects.first
+    if @project&.has_pending_invites?
+      flash[:alert] = "You must resolve all pending invites before continuing"
+      redirect_to projects_invite_members_path
     end
   end
   

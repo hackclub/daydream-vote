@@ -1,0 +1,55 @@
+<h1>Vote!</h1>
+
+<p><strong>Choose the top 3 projects to award prizes</strong></p>
+
+<div class="voting-instructions">
+  <p>Vote for the projects you think deserve recognition. You can vote for up to 3 projects.</p>
+  <p><em>Note: You cannot vote for projects you've contributed to.</em></p>
+</div>
+
+<% if @projects.any? %>
+  <div class="projects-list">
+    <% @projects.each do |project| %>
+      <div class="project-card">
+        <div class="project-header">
+          <h3><%= project.title %></h3>
+          <div class="project-team">
+            by <%= project.users.map(&:email).join(", ") %>
+          </div>
+        </div>
+        
+        <div class="project-details">
+          <p><%= project.description %></p>
+          
+          <div class="project-links">
+            <%= link_to "Play on Itch.io", project.itchio_url, target: "_blank", class: "project-link" %>
+            <%= link_to "View Code", project.repo_url, target: "_blank", class: "project-link" %>
+          </div>
+        </div>
+        
+        <div class="voting-actions">
+          <label class="vote-checkbox">
+            <input type="checkbox" name="project_votes[]" value="<%= project.id %>">
+            Vote for this project
+          </label>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
+  <div class="voting-form">
+    <form action="#" method="post" data-turbo="false">
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+      <button type="submit" class="btn btn-primary">Submit Votes</button>
+    </form>
+  </div>
+<% else %>
+  <div class="no-projects">
+    <p>No projects available for voting at this time.</p>
+    <p>Either no other participants have submitted projects yet, or you're the only participant at your event.</p>
+  </div>
+<% end %>
+
+<div class="actions">
+  <%= link_to "Back to Team Setup", projects_invite_members_path, class: "btn" %>
+</div>

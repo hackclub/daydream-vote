@@ -27,6 +27,10 @@ class Project < ApplicationRecord
     creator_positions.joins(:user).find_by(role: :owner)&.user
   end
   
+  def has_pending_invites?
+    creator_position_invites.where('expires_at > ?', Time.current).exists?
+  end
+  
   private
   
   def itchio_url_is_playable

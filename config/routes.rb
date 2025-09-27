@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   get "projects/select_role"
   get "projects/wait_for_invite"
+  get "projects/invite_members"
+  post "projects/invite_members", to: "projects#create_invite"
+  get "projects/vote"
+  delete "projects/invites/:invite_id", to: "projects#delete_invite", as: :delete_project_invite
   resource :project, only: [:edit, :update]
   resource :profile, only: [:edit, :update]
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
