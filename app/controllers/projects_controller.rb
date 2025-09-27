@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :require_authentication
+  before_action :require_authentication, except: [:show_invite]
   before_action :set_project, only: [ :edit, :update, :review, :submit ]
 
   def select_role
@@ -166,6 +166,12 @@ class ProjectsController < ApplicationController
       redirect_to root_path and return
     end
 
+    # Check if user is already signed in as someone else
+    if signed_in? && current_user.email != @invite.email.strip.downcase
+      flash[:alert] = "You are already signed in as someone else"
+      redirect_to new_session_path and return
+    end
+
     # Auto-sign in user by email if not already signed in
     unless signed_in?
       user = User.find_or_create_by(email: @invite.email.strip.downcase) do |u|
@@ -173,12 +179,6 @@ class ProjectsController < ApplicationController
       end
       session[:user_id] = user.id
       @current_user = user
-    end
-
-    # Check if current user's email matches invite email
-    unless current_user.email == @invite.email.strip.downcase
-      flash[:alert] = "This invite is for #{@invite.email}. Please sign in with that email."
-      redirect_to new_session_path and return
     end
 
     # Check if user is already part of this project
@@ -201,18 +201,9 @@ class ProjectsController < ApplicationController
       redirect_to root_path and return
     end
 
-    # Auto-sign in user by email if not already signed in
-    unless signed_in?
-      user = User.find_or_create_by(email: @invite.email.strip.downcase) do |u|
-        u.email = @invite.email.strip.downcase
-      end
-      session[:user_id] = user.id
-      @current_user = user
-    end
-
-    # Check if current user's email matches invite email
+    # Verify current user matches the invite email
     unless current_user.email == @invite.email.strip.downcase
-      flash[:alert] = "This invite is for #{@invite.email}. Please sign in with that email."
+      flash[:alert] = "This invite is for a different email address"
       redirect_to root_path and return
     end
 
