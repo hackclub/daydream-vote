@@ -4,36 +4,6 @@
 
 <p>Once they create the project submission, they can add you as a team member using your email address.</p>
 
-<% if @pending_invites.any? %>
-  <h2>Pending Invites</h2>
-  <% @pending_invites.each do |invite| %>
-    <div class="invite-item">
-      <h3><%= invite.project.title %></h3>
-      <p>Invited by: <%= invite.invited_by.email %></p>
-      <p>Expires: <%= invite.expires_at.strftime("%B %d, %Y at %I:%M %p") %></p>
-      <% unless invite.expired? %>
-        <%= link_to "Accept Invite", "#", class: "btn btn-primary" %>
-      <% else %>
-        <span class="expired">Expired</span>
-      <% end %>
-    </div>
-  <% end %>
-<% else %>
-  <p>No pending invites at this time.</p>
-<% end %>
-
-<% if @accepted_projects.any? %>
-  <h2>My Projects</h2>
-  <% @accepted_projects.each do |project| %>
-    <div class="project-item">
-      <h3><%= project.title %></h3>
-      <p><%= project.description %></p>
-      <p>Role: <%= current_user.creator_positions.find_by(project: project).role.humanize %></p>
-      <%= link_to "View Project", edit_project_path, class: "btn" %>
-    </div>
-  <% end %>
-<% else %>
-  <p>You haven't joined any projects yet.</p>
-<% end %>
+<%= render "invite_status" %>
 
 <%= link_to "Back to role selection", projects_select_role_path, class: "btn" %>

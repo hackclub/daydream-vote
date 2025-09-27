@@ -49,6 +49,7 @@
         </div>
       <% elsif @project.submitted? %>
         <p>Your project has been submitted. Thank you!</p>
+        <p>You can now get your shirt from the organizers. <%= link_to "Continue on to voting", event_vote_path(@project.attending_event) %>.</p>
       <% end %>
   </div>
 </div>

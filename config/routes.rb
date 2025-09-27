@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   get "projects/wait_for_invite"
   get "projects/invite_members"
   post "projects/invite_members", to: "projects#create_invite"
-  get "projects/vote"
+  get "events/:event/vote", to: "projects#vote", as: :event_vote
   delete "projects/invites/:invite_id", to: "projects#delete_invite", as: :delete_project_invite
   get "accept_invite/:token", to: "projects#accept_invite", as: :accept_invite
   resource :project, only: [ :edit, :update ] do

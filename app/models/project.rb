@@ -122,6 +122,8 @@ class Project < ApplicationRecord
   validates :repo_url, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }
   validate :itchio_url_is_playable
   validate :repo_url_is_accessible
+  validate :image_is_valid_type
+  validate :image_is_valid_size
 
   include AASM
 
@@ -166,6 +168,24 @@ class Project < ApplicationRecord
 
     unless GitRepoChecker.accessible?(repo_url)
       errors.add(:repo_url, "is not accessible or does not exist")
+    end
+  end
+
+  def image_is_valid_type
+    return unless image.attached?
+
+    allowed_types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp']
+    unless allowed_types.include?(image.content_type)
+      errors.add(:image, 'must be an image file (PNG, JPG, JPEG, GIF, or WebP)')
+    end
+  end
+
+  def image_is_valid_size
+    return unless image.attached?
+
+    max_size = 100.megabytes
+    if image.byte_size > max_size
+      errors.add(:image, "is too large (maximum is #{max_size / 1.megabyte}MB)")
     end
   end
 end

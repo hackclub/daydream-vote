@@ -8,6 +8,10 @@ class ProjectsController < ApplicationController
   def wait_for_invite
     @pending_invites = CreatorPositionInvite.where(email: current_user.email)
     @accepted_projects = current_user.projects.includes(:creator_positions)
+    
+    if turbo_frame_request_id == "invite_status"
+      render partial: "invite_status"
+    end
   end
 
   def invite_members
@@ -55,14 +59,27 @@ class ProjectsController < ApplicationController
   end
 
   def vote
-    # Get the user's current project to determine which event to show projects for
-    current_user_project = current_user.projects.first
-    redirect_to edit_project_path and return unless current_user_project&.attending_event
+    event_param = params[:event]
+    
+    # Validate the event exists in our enum
+    unless Project.attending_events.key?(event_param)
+      flash[:alert] = "Invalid event"
+      redirect_to root_path and return
+    end
 
-    current_user_event = current_user_project.attending_event
+    # Check if user has a submitted project for this specific event
+    current_user_project = current_user.projects.joins(:creator_positions)
+                                      .where(attending_event: event_param, aasm_state: :submitted)
+                                      .first
 
-    # Get projects from the same event, excluding current user's projects
-    @projects = Project.where(attending_event: current_user_event)
+    unless current_user_project
+      flash[:alert] = "You must have a submitted project for this event to vote"
+      redirect_to edit_project_path and return
+    end
+
+    # Get submitted projects from the same event, excluding current user's projects
+    @projects = Project.where(attending_event: event_param)
+                      .where(aasm_state: :submitted)
                       .where.not(id: current_user.projects.pluck(:id))
                       .includes(:users, :creator_positions)
   end
