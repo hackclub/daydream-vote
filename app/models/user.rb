@@ -15,9 +15,11 @@ class User < ApplicationRecord
     if profile_datum.nil?
       :your_info
     elsif projects.empty?
-      :your_project
+      :project_info
+    elsif projects.any? { |p| p.can_invite_collaborators? }
+      :invite_team
     elsif projects.any? { |p| p.draft? }
-      :review_and_submit
+      :review
     elsif projects.all? { |p| p.submitted? }
       :vote
     else
