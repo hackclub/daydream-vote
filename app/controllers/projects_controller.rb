@@ -83,6 +83,8 @@ class ProjectsController < ApplicationController
                       .where(aasm_state: :submitted)
                       .where.not(id: current_user.projects.pluck(:id))
                       .includes(:users, :creator_positions)
+
+    @votes = current_user.votes.where(project: @projects)
   end
 
   def make_vote_selection
@@ -113,7 +115,7 @@ class ProjectsController < ApplicationController
 
     Vote.transaction do
       # remove existing votes
-      current_user.votes.where(event: @event).destroy_all
+      current_user.votes.where(project: @event.projects).destroy_all
       # create new votes
       voted_projects.each do |project|
         current_user.votes.create!(project: project)

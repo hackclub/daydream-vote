@@ -36,7 +36,7 @@
               
               <div class="voting-actions">
                 <label class="vote-checkbox">
-                  <%= form.check_box project.id %>
+                  <%= form.check_box project.id, checked: project.in?(@votes.map(&:project)) %>
                   Vote for this project
                 </label>
               </div>
