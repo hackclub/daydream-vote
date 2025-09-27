@@ -1,7 +1,10 @@
-You've been invited by <%= @inviter.email %> to join the project "<%= @project.title %>" for Daydream.
-
-Click the link below to accept the invitation:
-
-<%= @accept_url %>
-
-This invitation will expire on <%= @invite.expires_at.strftime("%B %d, %Y at %I:%M %p") %>.
+{
+  "transactionalId": "cmg2tarrjn43sxj0inqgf5kvw",
+  "email": "<%= @invite.email %>",
+  "dataVariables": {
+    "sender_name": "<%= @inviter.name %>",
+    "project_name": "<%= @project.title %>",
+    "event_name": "<%= @project.event&.name || "Daydream" %>",
+    "invite_link": "<%= @accept_url %>"
+  }
+}

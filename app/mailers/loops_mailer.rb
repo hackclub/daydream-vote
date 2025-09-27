@@ -16,9 +16,7 @@ class LoopsMailer < ApplicationMailer
     @token = token
     @sign_in_url = verify_token_url(token_id: @token)
 
-    mail(
-      to: @email,
-    )
+    mail(to: @email)
   end
 
   def invite_email(invite)
@@ -27,9 +25,6 @@ class LoopsMailer < ApplicationMailer
     @inviter = invite.invited_by
     @accept_url = show_invite_url(token: invite.token)
 
-    mail(
-      to: @invite.email,
-      subject: "You've been invited to join #{@project.title}"
-    )
+    mail(to: @invite.email)
   end
 end
