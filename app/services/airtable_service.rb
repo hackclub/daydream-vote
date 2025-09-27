@@ -8,6 +8,14 @@ class AirtableService
   def self.find_profile_by_email(email)
     return nil unless ENV["AIRTABLE_API_KEY"].present?
     
+    Rails.cache.fetch("airtable_profile:#{email.downcase}", expires_in: 1.hour) do
+      fetch_profile_from_airtable(email)
+    end
+  end
+  
+  private
+  
+  def self.fetch_profile_from_airtable(email)
     url = "https://api.airtable.com/v0/#{BASE_ID}/#{TABLE_ID}"
     filter_formula = "LOWER({email}) = '#{email.downcase}'"
     

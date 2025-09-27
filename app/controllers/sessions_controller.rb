@@ -36,15 +36,10 @@ class SessionsController < ApplicationController
       token.mark_as_used!
       session[:user_id] = token.user.id
       
-      # Create or ensure profile data exists
+      # Check if profile data exists
       if token.user.profile_datum.nil?
-        profile_data = ::AirtableService.find_profile_by_email(token.user.email)
-        if profile_data
-          token.user.create_profile_datum!(profile_data)
-        else
-          token.user.create_profile_datum!
-        end
-        flash[:notice] = "Successfully signed in! Please review your profile information."
+        session[:first_profile_completion] = true
+        flash[:notice] = "Successfully signed in! Please complete your profile information."
         redirect_to edit_profile_path
       else
         flash[:notice] = "Successfully signed in!"

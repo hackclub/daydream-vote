@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_27_041029) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_27_050201) do
   create_table "profile_data", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "first_name"
@@ -26,6 +26,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_041029) do
     t.datetime "updated_at", null: false
     t.integer "attending_event"
     t.index ["user_id"], name: "index_profile_data_on_user_id"
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "itchio_url"
+    t.string "repo_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
   create_table "tokens", id: :string, force: :cascade do |t|
@@ -46,5 +57,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_041029) do
   end
 
   add_foreign_key "profile_data", "users"
+  add_foreign_key "projects", "users"
   add_foreign_key "tokens", "users"
 end

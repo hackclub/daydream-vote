@@ -1,6 +1,6 @@
 <h1>Edit Profile</h1>
 
-<%= form_with model: @profile_datum, url: profile_path, method: :patch, local: true do |form| %>
+<%= form_with model: @profile_datum, url: profile_path, method: :patch, local: true, data: { turbo: false } do |form| %>
   <% if @profile_datum.errors.any? %>
     <div>
       <h2><%= pluralize(@profile_datum.errors.count, "error") %> prohibited this profile from being saved:</h2>

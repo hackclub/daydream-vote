@@ -1,0 +1,7 @@
+<nav class="main-nav">
+  <% if signed_in? %>
+    <%= link_to "select your daydream", edit_profile_path %>
+    <%= link_to "add your project", edit_project_path %>
+    <span>get your t-shirt</span>
+  <% end %>
+</nav>
