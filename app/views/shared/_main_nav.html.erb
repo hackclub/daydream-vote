@@ -1,6 +1,7 @@
 <%# locals: (progress: nil) %>
 
 <% stages = %i[your_info project_info invite_team review vote] %>
+<% selected_stage_index = stages.index(progress) || 0 %>
 <% current_stage_index = stages.index(current_user.last_unlocked_step) || 0 %>
 
 <nav class="progress-nav">
