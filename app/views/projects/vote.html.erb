@@ -13,6 +13,9 @@
     <% else %>
       <p><strong>Choose the top 3 projects to award prizes</strong></p>
 
+      <% votes = @projects.map(&:votes).map(&:count).sum %>
+      <p><em><%= votes %> <%= votes == 1 ? "vote has" : "votes have" %> been cast so far.</em></p>
+
       <div class="voting-instructions">
         <p>Vote for the projects you think deserve recognition. You can vote for up to 3 projects.</p>
         <p><em>Note: You cannot vote for projects you've contributed to.</em></p>
