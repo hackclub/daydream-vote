@@ -44,7 +44,7 @@ body {
   border: 1px solid #e9d8b9;
 }
 .main {
-  max-width: 32rem;
+  max-width: 64rem;
   width: 100%;
   min-height: 100vh;
   margin-inline: auto;
@@ -745,4 +745,102 @@ html, body {
 .vote-checkbox:has(input:checked) {
     background:#4477A3;
     color: white;
+  max-width: 32rem;
+}
+
+.card.game-card {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  padding: 0;
+  border: 2px solid #e9d8b9 !important;
+}
+.card.game-card-wrapper {
+  margin: 2rem auto;
+  width: max-content;
+  padding: 1rem;
+}
+
+.game-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid #e9d8b9;
+}
+
+.game-image-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.game-info h2 {
+  text-align: left;
+  margin: 0.75rem 1rem;
+  font-size: 1.5rem;
+  font-family: 'Atkinson Hyperlegible', sans-serif;
+}
+
+.game-info p {
+  margin: 0rem 1rem 0.75rem 1rem;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.game-byline {
+  font-style: italic;
+  font-size: 1rem !important;
+  opacity: 0.8;
+}
+
+.pink-link {
+  color: #E472AB !important;
+  text-decoration: underline;
+  font-size: 1.1rem;
+  display: inline-block;
+  margin: 0.25rem 0;
+}
+
+.pink-link:hover {
+  filter: brightness(1.1);
+}
+
+.external-links {
+  margin: 1.5rem auto;
+  width: max-content;
+}
+
+.team-members-section {
+  margin: 2rem 0;
+}
+
+.team-members-section h3 {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.review-warning {
+  font-style: italic;
+  text-align: center;
+  color: rgb(139, 69, 19);
+  opacity: 0.8;
+  margin: 2rem 0;
+  font-size: 1.1rem;
+}
+
+.review-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.review-button {
+  flex: 1;
 }
