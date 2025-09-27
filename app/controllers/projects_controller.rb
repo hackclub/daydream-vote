@@ -16,7 +16,7 @@ class ProjectsController < ApplicationController
 
   def invite_members
     @project = current_user.projects.first
-    redirect_to edit_project_path unless @project&.draft?
+    redirect_to edit_project_path unless @project.present?
   end
 
   def create_invite
@@ -173,7 +173,6 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    redirect_to review_project_path if @project.submitted?
   end
 
   def review

@@ -53,9 +53,10 @@
                     local: true, data: { turbo: false }, class: "inline-invite" do |form| %>
                   <%= form.email_field :email, 
                       placeholder: "Email of team member ##{i + 1}", 
-                      required: true, 
+                      required: true,
+                      disabled: @project.submitted?,
                       class: "inline-email-input" %>
-                  <%= form.submit "Invite", class: "inline-invite-btn" %>
+                  <%= form.submit "Invite", class: "inline-invite-btn #{"disabled" if @project.submitted?}", disabled: @project.submitted? %>
                 <% end %>
               </div>
             <% end %>

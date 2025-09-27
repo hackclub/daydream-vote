@@ -19,22 +19,22 @@
       <div class="standard-form">
         <div class="wide">
           <%= form.label :title %>
-          <%= form.text_field :title, placeholder: "Game name" %>
+          <%= form.text_field :title, placeholder: "Game name", disabled: @project.submitted? %>
         </div>
 
         <div class="wide">
           <%= form.label :description %>
-          <%= form.text_area :description, placeholder: "A brief description of your game" %>
+          <%= form.text_area :description, placeholder: "A brief description of your game", disabled: @project.submitted? %>
         </div>
 
         <div class="wide">
           <%= form.label :itchio_url, "Itch.io URL" %>
-          <%= form.url_field :itchio_url, placeholder: "https://yourname.itch.io/game-name" %>
+          <%= form.url_field :itchio_url, placeholder: "https://yourname.itch.io/game-name", disabled: @project.submitted? %>
         </div>
 
         <div class="wide">
           <%= form.label :repo_url, "Repository URL" %>
-          <%= form.url_field :repo_url, placeholder: "https://github.com/yourname/game-name" %>
+          <%= form.url_field :repo_url, placeholder: "https://github.com/yourname/game-name", disabled: @project.submitted? %>
         </div>
 
         <div class="wide">
@@ -45,13 +45,13 @@
 
         <div class="wide">
           <%= form.label :image, "Project Image" %>
-          <%= form.file_field :image, accept: "image/png,image/jpg,image/jpeg,image/gif,image/webp" %>
+          <%= form.file_field :image, accept: "image/png,image/jpg,image/jpeg,image/gif,image/webp", disabled: @project.submitted? %>
         </div>
 
         <div
           class="submit-wrapper"
         >
-          <%= form.submit "Save & Continue", class: "submit-button-elem" %>
+          <%= form.submit "Save & Continue", class: "submit-button-elem #{"disabled" if @project.submitted?}", disabled: @project.submitted? %>
           <img
             src="/button-clouds.svg" 
             alt="" 
