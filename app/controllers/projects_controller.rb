@@ -8,7 +8,7 @@ class ProjectsController < ApplicationController
   def wait_for_invite
     @pending_invites = CreatorPositionInvite.where(email: current_user.email)
     @accepted_projects = current_user.projects.includes(:creator_positions)
-    
+
     if turbo_frame_request_id == "invite_status"
       render partial: "invite_status"
     end
@@ -60,17 +60,17 @@ class ProjectsController < ApplicationController
 
   def vote
     event_param = params[:event]
-    
+
     # Validate the event exists
-    event = Event.find_by(name: event_param)
-    unless event
+    @event = Event.find_by(name: event_param)
+    unless @event
       flash[:alert] = "Invalid event"
       redirect_to root_path and return
     end
 
     # Check if user has a submitted project for this specific event
     current_user_project = current_user.projects.joins(:creator_positions)
-                                      .where(attending_event: event, aasm_state: :submitted)
+                                      .where(attending_event: @event, aasm_state: :submitted)
                                       .first
 
     unless current_user_project
@@ -79,10 +79,39 @@ class ProjectsController < ApplicationController
     end
 
     # Get submitted projects from the same event, excluding current user's projects
-    @projects = Project.where(attending_event: event)
+    @projects = Project.where(attending_event: @event)
                       .where(aasm_state: :submitted)
                       .where.not(id: current_user.projects.pluck(:id))
                       .includes(:users, :creator_positions)
+  end
+
+  def make_vote_selection
+    event_param = params[:event]
+
+    @event = Event.find_by(name: event_param)
+    unless @event
+      flash[:alert] = "Invalid event"
+      redirect_to root_path and return
+    end
+
+    # Check if user has a submitted project for this specific event
+    current_user_project = current_user.projects.joins(:creator_positions)
+                                      .where(attending_event: @event, aasm_state: :submitted)
+                                      .first
+
+    unless current_user_project
+      flash[:alert] = "You must have a submitted project for this event to vote"
+      redirect_to edit_project_path and return
+    end
+
+    voted_projects = Project.where(id: params[:project_votes].keys)
+
+    if voted_projects.count > 3
+      flash[:alert] = "You can only vote for up to 3 projects"
+      redirect_to event_vote_path(@event.name) and return
+    end
+
+    render plain: voted_projects.inspect
   end
 
   def delete_invite
@@ -108,7 +137,7 @@ class ProjectsController < ApplicationController
 
   def accept_invite
     invite = CreatorPositionInvite.find_by(token: params[:token])
-    
+
     unless invite
       flash[:alert] = "Invite not found or expired"
       redirect_to root_path and return

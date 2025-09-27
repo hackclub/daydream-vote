@@ -13,42 +13,44 @@
     </div>
 
     <% if @projects.any? %>
-      <div class="projects-list">
-        <% @projects.each do |project| %>
-        
-          <div class="project-card">
-            <div class="project-header">
-              <h3><%= project.title %></h3>
-              <div class="project-team">
-                by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+      <%= form_for :project_votes, url: event_make_vote_selection_path(@event.name), method: :post, local: true, data: { turbo: false } do |form| %>
+        <div class="projects-list">
+          <% @projects.each do |project| %>
+          
+            <div class="project-card">
+              <div class="project-header">
+                <h3><%= project.title %></h3>
+                <div class="project-team">
+                  by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+                </div>
               </div>
-            </div>
-            
-            <div class="project-details">
-              <p><%= project.description %></p>
               
-              <div class="project-links">
-                <%= link_to "Play on Itch.io", project.itchio_url, target: "_blank", class: "project-link" %>
-                <%= link_to "View Code", project.repo_url, target: "_blank", class: "project-link" %>
+              <div class="project-details">
+                <p><%= project.description %></p>
+                
+                <div class="project-links">
+                  <%= link_to "Play on Itch.io", project.itchio_url, target: "_blank", class: "project-link" %>
+                  <%= link_to "View Code", project.repo_url, target: "_blank", class: "project-link" %>
+                </div>
+              </div>
+              
+              <div class="voting-actions">
+                <label class="vote-checkbox">
+                  <%= form.check_box project.id %>
+                  Vote for this project
+                </label>
               </div>
             </div>
-            
-            <div class="voting-actions">
-              <label class="vote-checkbox">
-                <input type="checkbox" name="project_votes[]" value="<%= project.id %>">
-                Vote for this project
-              </label>
-            </div>
-          </div>
-        <% end %>
-      </div>
-      
-      <div class="voting-form">
-        <form action="#" method="post" data-turbo="false">
-          <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-          <button type="submit" class="btn btn-primary">Submit Votes</button>
-        </form>
-      </div>
+          <% end %>
+        </div>
+        
+        <div class="voting-form">
+          <form action="#" method="post" data-turbo="false">
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <button type="submit" class="btn btn-primary">Submit Votes</button>
+          </form>
+        </div>
+      <% end %>
     <% else %>
       <div class="no-projects">
         <p>No projects available for voting at this time.</p>
