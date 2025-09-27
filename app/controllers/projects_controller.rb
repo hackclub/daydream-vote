@@ -12,12 +12,12 @@ class ProjectsController < ApplicationController
 
   def invite_members
     @project = current_user.projects.first
-    redirect_to edit_project_path unless @project
+    redirect_to edit_project_path unless @project&.draft?
   end
 
   def create_invite
     @project = current_user.projects.first
-    redirect_to edit_project_path and return unless @project
+    redirect_to edit_project_path and return unless @project&.draft?
 
     email = params[:email]&.strip&.downcase
 
@@ -92,6 +92,7 @@ class ProjectsController < ApplicationController
   end
 
   def edit
+    redirect_to review_project_path if @project.submitted?
   end
 
   def review

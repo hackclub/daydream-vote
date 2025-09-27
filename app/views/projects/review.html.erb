@@ -35,14 +35,18 @@
         <% end %>
       </ul>
 
-      <div style="display: flex; flex-direction: row; justify-content: space-between">
-        <%= button_to edit_project_path, method: :get do %>
-          Make Changes
-        <% end %>
+      <% if @project.draft? %>
+        <div style="display: flex; flex-direction: row; justify-content: space-between">
+          <%= button_to edit_project_path, method: :get do %>
+            Make Changes
+          <% end %>
 
-        <%= button_to submit_project_path, method: :post do %>
-          Submit Project
-        <% end %>
-      </div>
+          <%= button_to submit_project_path, method: :post do %>
+            Submit Project
+          <% end %>
+        </div>
+      <% elsif @project.submitted? %>
+        <p>Your project has been submitted. Thank you!</p>
+      <% end %>
   </div>
 </div>
