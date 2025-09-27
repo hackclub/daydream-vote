@@ -61,15 +61,16 @@ class ProjectsController < ApplicationController
   def vote
     event_param = params[:event]
     
-    # Validate the event exists in our enum
-    unless Project.attending_events.key?(event_param)
+    # Validate the event exists
+    event = Event.find_by(name: event_param)
+    unless event
       flash[:alert] = "Invalid event"
       redirect_to root_path and return
     end
 
     # Check if user has a submitted project for this specific event
     current_user_project = current_user.projects.joins(:creator_positions)
-                                      .where(attending_event: event_param, aasm_state: :submitted)
+                                      .where(attending_event: event, aasm_state: :submitted)
                                       .first
 
     unless current_user_project
@@ -78,7 +79,7 @@ class ProjectsController < ApplicationController
     end
 
     # Get submitted projects from the same event, excluding current user's projects
-    @projects = Project.where(attending_event: event_param)
+    @projects = Project.where(attending_event: event)
                       .where(aasm_state: :submitted)
                       .where.not(id: current_user.projects.pluck(:id))
                       .includes(:users, :creator_positions)
@@ -198,6 +199,6 @@ class ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:title, :description, :itchio_url, :repo_url, :image, :attending_event)
+    params.require(:project).permit(:title, :description, :itchio_url, :repo_url, :image, :attending_event_id)
   end
 end

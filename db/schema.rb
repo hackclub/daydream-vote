@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_27_145946) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_27_155905) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -62,6 +62,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_145946) do
     t.index ["user_id"], name: "index_creator_positions_on_user_id"
   end
 
+  create_table "events", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_events_on_name", unique: true
+  end
+
   create_table "prechecks", force: :cascade do |t|
     t.integer "project_id", null: false
     t.integer "status"
@@ -96,7 +103,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_145946) do
     t.datetime "updated_at", null: false
     t.string "aasm_state"
     t.datetime "submitted_at"
-    t.integer "attending_event"
+    t.integer "attending_event_id", null: false
+    t.index ["attending_event_id"], name: "index_projects_on_attending_event_id"
   end
 
   create_table "tokens", id: :string, force: :cascade do |t|
@@ -124,5 +132,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_145946) do
   add_foreign_key "creator_positions", "users"
   add_foreign_key "prechecks", "projects"
   add_foreign_key "profile_data", "users"
+  add_foreign_key "projects", "events", column: "attending_event_id"
   add_foreign_key "tokens", "users"
 end
