@@ -1,9 +1,23 @@
-<h1>Waiting for Team Invite</h1>
+<div class="main">
+  <div class="card big">
+    <h1>Waiting for Team Invite</h1>
+    
+    <div class="card light">
+      <div class="waiting-instructions">
+        <h3>How to join a team</h3>
+        <p>Give your email address to the project creator:</p>
+        <div class="email-display">
+          <strong><%= current_user.email %></strong>
+        </div>
+        <p>They'll be able to add you as a team member from their project dashboard.</p>
+      </div>
+    </div>
 
-<p>You will need to give your email (<%= current_user.email %>) to the submitter on your team to get an invite.</p>
+    <%= render "project/invite_status" %>
 
-<p>Once they create the project submission, they can add you as a team member using your email address.</p>
-
-<%= render "projects/invite_status" %>
-
-<%= link_to "Back to role selection", projects_select_role_path, class: "btn" %>
+    <div class="submit-wrapper">
+      <%= link_to "Back to role selection", projects_select_role_path, class: "submit-button-elem" %>
+      <img src="/button-clouds.svg" alt="" class="submit-clouds">
+    </div>
+  </div>
+</div>
