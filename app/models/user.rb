@@ -12,16 +12,16 @@ class User < ApplicationRecord
   before_validation :normalize_email
 
   def last_unlocked_step
-    if profile_datum.nil?
-      :your_info
-    elsif projects.empty?
-      :project_info
-    elsif projects.any? { |p| p.can_invite_collaborators? }
-      :invite_team
+    if projects.all? { |p| p.submitted? } && projects.any?
+      :vote
     elsif projects.any? { |p| p.draft? }
       :review
-    elsif projects.all? { |p| p.submitted? }
-      :vote
+    elsif projects.any? { |p| p.can_invite_collaborators? }
+      :invite_team
+    elsif projects.any?
+      :invite_team  # If you have projects, you can at least try to invite team
+    elsif profile_datum.present?
+      :project_info
     else
       :your_info
     end
