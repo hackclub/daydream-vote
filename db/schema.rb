@@ -66,6 +66,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_171923) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "owner_email"
     t.index ["name"], name: "index_events_on_name", unique: true
   end
 

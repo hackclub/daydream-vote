@@ -6,6 +6,15 @@ class ProfilesController < ApplicationController
   end
 
   def update
+    # Check honesty policy agreement
+    unless params[:profile_datum][:honesty_policy_agreement] == "true"
+      @profile_datum.assign_attributes(profile_datum_params)
+      @profile_datum.errors.add(:honesty_policy_agreement, "must be accepted")
+      flash.now[:alert] = "Please fix the errors below"
+      render :edit
+      return
+    end
+
     if @profile_datum.update(profile_datum_params)
       flash[:notice] = "Profile updated successfully"
       if @profile_datum.user.projects.first.present?
