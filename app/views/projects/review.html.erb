@@ -72,11 +72,11 @@
             <div class="member-info">
               <div class="member-email">
                 <strong><%= user.email %></strong>
-                <% if user.profile_complete? %>
+                <!--<% if user.profile_complete? %>
                   <span style="color: #10b981; font-size: 0.8rem; margin-left: 0.5rem;">✓ Profile Complete</span>
                 <% else %>
                   <span style="color: #f59e0b; font-size: 0.8rem; margin-left: 0.5rem;">⚠ Profile Incomplete</span>
-                <% end %>
+                <% end %>-->
               </div>
               <div class="member-role"><%= user.creator_positions.find_by(project: @project).role.humanize %></div>
             </div>

@@ -553,6 +553,7 @@ html, body {
   border: 1px solid #d37e8c;
   color: #8b133b;
   margin-bottom: 1.5rem;
+  padding-inline: 1em;
 }
 .error h2 {
   color: #841040;
@@ -1097,4 +1098,9 @@ html, body {
 }
 .game-card-buttons > div:nth-child(2) {
   filter: grayscale(100%) brightness(80%) contrast(200%);
+}
+
+input[disabled], textarea[disabled], select[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

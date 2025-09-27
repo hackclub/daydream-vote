@@ -19,12 +19,12 @@
       <div class="standard-form">
         <div class="wide">
           <%= form.label :title %>
-          <%= form.text_field :title, placeholder: "Game name", disabled: @project.submitted? %>
+          <%= form.text_field :title, placeholder: "Game name", disabled: @project.submitted?, maxlength: 60 %>
         </div>
 
         <div class="wide">
           <%= form.label :description %>
-          <%= form.text_area :description, placeholder: "A brief description of your game", disabled: @project.submitted? %>
+          <%= form.text_area :description, placeholder: "A brief description of your game", disabled: @project.submitted?, maxlength: 800 %>
         </div>
 
         <div class="wide">
