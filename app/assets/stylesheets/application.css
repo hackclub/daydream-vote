@@ -53,7 +53,7 @@ body {
   align-items: center;
 }
 .main > .card {
-  margin: 3rem 2rem;
+  margin: 3rem 2rem 8rem 2rem;
 }
 
 h1,
@@ -801,8 +801,8 @@ html, body {
 }
 
 .vote-checkbox:has(input:checked) {
-    background:#4477A3;
-    color: white;
+  background:#4477A3;
+  color: white;
   max-width: 32rem;
 }
 
@@ -1066,4 +1066,9 @@ html, body {
 .accept-options input {
   font-family: "Atkinson Hyperlegible" !important;
   font-size: 1.25rem !important;
+}
+
+.review-card {
+  max-width: 48rem;
+  width: 100%;
 }

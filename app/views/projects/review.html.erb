@@ -1,7 +1,7 @@
 <% @progress = :review %>
 
 <div class="main">
-  <div class="card big">
+  <div class="card big review-card">
     <h1>Review & Submit</h1>
 
     <% if @project.errors.any? %>
@@ -63,19 +63,19 @@
     </div>
 
 
-    <p class="review-warning">Make sure this looks right, because once you press submit there's no going back!</p>
-    <p class="review-shirt-notice">Once you submit, you'll be able to claim your T-shirt from the organizers!</p>
+    <% if @project.draft? %>
+      <p class="review-warning">Make sure this looks right, because once you press submit there's no going back!</p>
+      <p class="review-shirt-notice">Once you submit, you'll be able to claim your T-shirt from the organizers!</p>
 
-    <div class="wide">
-      <div class="checkbox-option" style="margin-inline: auto; width: max-content; display: flex; align-items: start; justify-items: start; gap: 0.5rem">
-        <%= check_box_tag :attendance_verification, "true", false, { required: true } %>
-        <div style="max-width: 400px">
-        <%= label_tag "attendance_verification", "I'm currently in-person at #{@project.attending_event.name.titleize} and I commit to being truthful in all information I provide." %>
+      <div class="wide">
+        <div class="checkbox-option" style="margin-inline: auto; width: max-content; display: flex; align-items: start; justify-items: start; gap: 0.5rem">
+          <%= check_box_tag :attendance_verification, "true", false, { required: true } %>
+          <div style="max-width: 400px">
+          <%= label_tag "attendance_verification", "I'm currently in-person at #{@project.attending_event.name.titleize} and I commit to being truthful in all information I provide." %>
+          </div>
         </div>
       </div>
-    </div>
 
-    <% if @project.draft? %>
       <div class="review-buttons">
         <div class="submit-wrapper review-button">
           <%= link_to "Go back", edit_project_path, class: "submit-button-elem" %>
@@ -88,8 +88,15 @@
         </div>
       </div>
     <% elsif @project.submitted? %>
-      <p>Your project has been submitted. Thank you!</p>
-      <p>You can now get your shirt from the organizers. <%= link_to "Continue on to voting", event_vote_path(@project.attending_event.name) %>.</p>
+      <div style="text-align: center;">
+        <p>Your project has been submitted. Thank you!</p>
+        <p style="font-size: 1.5rem"><strong>You can now claim your shirt from the organizers!</strong></p>
+        
+        <div class="submit-wrapper review-button" style="margin-top: 1rem;">
+          <%= link_to "Continue On To Voting", event_vote_path(@project.attending_event.name), class: "submit-button-elem" %>
+          <img src="/button-clouds.svg" alt="" class="submit-clouds">
+        </div>
+      </div>
     <% end %>
   </div>
 </div>
