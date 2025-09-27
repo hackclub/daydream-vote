@@ -1,7 +1,7 @@
 class StaticPagesController < ApplicationController
   def landing
     if signed_in?
-      @projects = current_user.projects
+      @progress = :your_info
     end
   end
 end

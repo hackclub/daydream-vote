@@ -17,10 +17,7 @@
         
         <div class="divider"></div>
         
-        <% if signed_in? %>
-            <p>Welcome back, <strong><%= current_user.profile_datum&.first_name %></strong>!</p>
-            <%= button_to "Sign Out", session_path(current_user), method: :delete, data: { turbo_frame: "_top" } %>
-        <% else %>
+        <% unless signed_in? %>
             <p class="email-caption">Enter your email to start:</p>
             <p>(This will send you a magic link; please use the same email you used for the rest of Daydream)</p>
         
@@ -34,16 +31,6 @@
 
     </div>
 
-    <% if @projects&.any? %>
-        <% @projects.each do |project| %>
-            <div class="card">
-                <h3><%= project.title %></h3>
-                <p><%= project.description %></p>
-                <div class="project-actions">
-                    <%= link_to "Manage project", edit_project_path(project) %>
-                </div>
-            </div>
-        <% end %>
-    <% end %>
+
         
 </div>
