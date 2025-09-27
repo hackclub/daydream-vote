@@ -44,7 +44,7 @@ body {
   border: 1px solid #e9d8b9;
 }
 .main {
-  max-width: 64rem;
+  max-width: 32rem;
   width: 100%;
   min-height: 100vh;
   margin-inline: auto;
@@ -716,5 +716,8 @@ html, body {
   box-shadow: none;
 }
 .card.big:has(.team-members-list) {
+  width: 100%;
+}
+.main:has(.team-members-list) {
   width: 100%;
 }
