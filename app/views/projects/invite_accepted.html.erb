@@ -1,81 +1,73 @@
-<div class="min-h-screen bg-gradient-to-br from-green-900 via-emerald-900 to-teal-900 flex items-center justify-center p-4">
-  <div class="max-w-3xl w-full">
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-      <div class="bg-gradient-to-r from-green-600 to-emerald-600 p-8 text-white text-center">
-        <div class="text-6xl mb-4">🎉</div>
-        <h1 class="text-3xl font-bold mb-2">Welcome to the team!</h1>
-        <p class="text-green-100">You've successfully joined the project</p>
-      </div>
-      
-      <div class="p-8">
-        <div class="text-center mb-8">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4"><%= @project.title %></h2>
-          <p class="text-gray-600 text-lg mb-6"><%= @project.description %></p>
-          
-          <div class="bg-gray-50 rounded-lg p-6 mb-6">
-            <h3 class="font-semibold text-gray-900 mb-4">Project Details</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <span class="font-medium text-gray-700">Event:</span>
-                <span class="text-gray-600"><%= @project.attending_event.name if @project.attending_event %></span>
-              </div>
-              <div>
-                <span class="font-medium text-gray-700">Current status:</span>
-                <span class="text-gray-600 capitalize"><%= @project.aasm_state.humanize %></span>
-              </div>
-              <div>
-                <span class="font-medium text-gray-700">Team members:</span>
-                <span class="text-gray-600"><%= @project.users.count %> member<%= 's' if @project.users.count != 1 %></span>
-              </div>
-              <% if @project.repo_url.present? %>
-              <div>
-                <span class="font-medium text-gray-700">Repository:</span>
-                <a href="<%= @project.repo_url %>" target="_blank" class="text-blue-600 hover:text-blue-800 underline">View Code</a>
-              </div>
-              <% end %>
-            </div>
-          </div>
+<div class="main">
+  <div class="card big">
+    <h1 style="margin-bottom: 0.2rem">Welcome to the team!</h1>
+    <p style="text-align: center; opacity: 0.8; margin-top: 0;margin-bottom: 2rem;">You've successfully joined the project:</p>
+    
+    <div class="card light">
+      <h2><%= @project.title %></h2>
+      <p style="text-align: center; margin: 1rem 0;"><%= @project.description %></p>
+    </div>
 
-          <% if @project.users.any? %>
-          <div class="bg-blue-50 rounded-lg p-6 mb-6">
-            <h3 class="font-semibold text-gray-900 mb-4">Your Teammates</h3>
-            <div class="flex flex-wrap justify-center gap-3">
-              <% @project.users.each do |user| %>
-                <div class="bg-white px-4 py-2 rounded-full border">
-                  <span class="text-sm font-medium text-gray-700"><%= user.email %></span>
-                  <% creator_position = @project.creator_positions.find_by(user: user) %>
-                  <% if creator_position %>
-                    <span class="text-xs text-gray-500 ml-1">(<%= creator_position.role.humanize %>)</span>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-          <% end %>
-          
-          <div class="bg-purple-50 border-l-4 border-purple-400 p-6 mb-8">
-            <div class="flex items-center">
-              <div class="text-2xl mr-3">👕</div>
-              <div class="text-left">
-                <h4 class="font-semibold text-purple-900">T-shirt Eligibility</h4>
-                <p class="text-purple-800">Once the project is submitted, you'll be eligible for a t-shirt!</p>
-              </div>
-            </div>
-          </div>
+    <div class="card light" style="padding-bottom: 1.5rem;">
+      <h3 style="margin-bottom: 1rem;">Project Details</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 1rem;">
+        <div>
+          <strong>Event:</strong><br>
+          <%= @project.attending_event.name if @project.attending_event %>
         </div>
-        
-        <div class="flex justify-center">
-          <%= link_to "Go to Project Dashboard", 
-              edit_project_path, 
-              class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200" %>
+        <div>
+          <strong>Current status:</strong><br>
+          <span style="text-transform: capitalize;"><%= @project.aasm_state.humanize %></span>
         </div>
-        
-        <div class="mt-6 text-center">
-          <p class="text-sm text-gray-500">
-            Work with your team to build something amazing!
-          </p>
+        <div>
+          <strong>Team members:</strong><br>
+          <%= @project.users.count %> member<%= 's' if @project.users.count != 1 %>
+        </div>
+        <% if @project.repo_url.present? %>
+        <div>
+          <strong>Repository:</strong><br>
+          <a href="<%= @project.repo_url %>" target="_blank" style="color: #E472AB; text-decoration: underline;">View Code</a>
+        </div>
+        <% end %>
+      </div>
+    </div>
+
+    <% if @project.users.any? %>
+    <div class="card light" style="padding-bottom: 1.5rem;">
+      <h3 style="margin-bottom: 1rem;">Your Teammates</h3>
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem;">
+        <% @project.users.each do |user| %>
+          <div style="background-color: #ffffff; padding: 0.5rem 1rem; border-radius: 9999px; border: 1px solid #E472AB; font-size: 0.9rem;">
+            <strong><%= user.email %></strong>
+            <% creator_position = @project.creator_positions.find_by(user: user) %>
+            <% if creator_position %>
+              <span style="opacity: 0.6; margin-left: 0.25rem;">(<%= creator_position.role.humanize %>)</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <% end %>
+    
+    <div class="card light" style="padding: 0.5rem 1rem; border-left: 4px solid #E472AB;">
+      <div style="display: flex; align-items: center; gap: 1.25rem;">
+        <img src="/shirt.png" style="height: 4rem;" >
+        <div>
+          <h4 style="margin: 0; font-size: 1.1rem; color: rgb(131, 55, 16);">T-shirt Eligibility</h4>
+          <p style="margin: 0.25rem 0 0 0; font-size: 1rem;">Once the project is submitted, you'll be eligible for a t-shirt!</p>
         </div>
       </div>
+    </div>
+
+    <div class="submit-wrapper" style="margin: 2rem auto;">
+      <%= link_to "Go to Project Dashboard", edit_project_path, class: "submit-button-elem" %>
+      <img src="/button-clouds.svg" alt="" class="submit-clouds">
+    </div>
+
+    <div style="text-align: center; margin: 1rem 0;">
+      <p style="font-size: 1rem; opacity: 0.8; margin: 0;">
+        Work with your team to build something amazing!
+      </p>
     </div>
   </div>
 </div>
