@@ -323,6 +323,26 @@ hr {
   }
 }
 
+.navbar-shirt {
+  position: absolute;
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: contain;
+  top: -230%;
+  right: -180%;
+  transform: rotate(10deg);
+}
+.navbar-shirt-arrow {
+  position: absolute;
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: contain;
+  top: -110%;
+  right: -210%;
+  transform: rotate(15deg);
+  color: #4477A3;
+}
+
 .standard-form {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -862,11 +882,19 @@ html, body {
 }
 
 .review-warning {
+  font-weight: 600;
+  text-align: center;
+  color: rgb(139, 69, 19);
+  margin-top: 2.5rem;
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+.review-shirt-notice {
   font-style: italic;
   text-align: center;
   color: rgb(139, 69, 19);
   opacity: 0.8;
-  margin: 2rem 0;
+  margin-bottom: 2rem;
   font-size: 1.1rem;
 }
 
