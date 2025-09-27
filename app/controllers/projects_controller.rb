@@ -284,6 +284,11 @@ class ProjectsController < ApplicationController
         render :edit
       end
     else
+      if @project.submitted?
+        flash[:alert] = "Cannot update a submitted project"
+        redirect_to review_project_path and return
+      end
+
       if @project.update(project_params)
         flash[:notice] = "Project updated successfully"
         redirect_to projects_invite_members_path
