@@ -1,43 +1,49 @@
-<h1>Edit Project</h1>
+<% @progress = :project_info %>
 
-<%= form_with model: @project, url: project_path, method: :patch, local: true, multipart: true, data: { turbo: false } do |form| %>
-  <% if @project.errors.any? %>
-    <div>
-      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
-      <ul>
-        <% @project.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<div class="main">
+  <div class="card big">
+    <h1>Edit Project</h1>
 
-  <div>
-    <%= form.label :title %>
-    <%= form.text_field :title %>
+    <%= form_with model: @project, url: project_path, method: :patch, local: true, multipart: true, data: { turbo: false } do |form| %>
+      <% if @project.errors.any? %>
+        <div>
+          <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+          <ul>
+            <% @project.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= form.label :title %>
+        <%= form.text_field :title %>
+      </div>
+
+      <div>
+        <%= form.label :description %>
+        <%= form.text_area :description %>
+      </div>
+
+      <div>
+        <%= form.label :itchio_url, "Itch.io URL" %>
+        <%= form.url_field :itchio_url %>
+      </div>
+
+      <div>
+        <%= form.label :repo_url, "Repository URL" %>
+        <%= form.url_field :repo_url %>
+      </div>
+
+      <div>
+        <%= form.label :image, "Project Image" %>
+        <%= form.file_field :image %>
+      </div>
+
+      <div>
+        <%= form.submit "Update Project" %>
+      </div>
+    <% end %>
   </div>
-
-  <div>
-    <%= form.label :description %>
-    <%= form.text_area :description %>
-  </div>
-
-  <div>
-    <%= form.label :itchio_url, "Itch.io URL" %>
-    <%= form.url_field :itchio_url %>
-  </div>
-
-  <div>
-    <%= form.label :repo_url, "Repository URL" %>
-    <%= form.url_field :repo_url %>
-  </div>
-
-  <div>
-    <%= form.label :image, "Project Image" %>
-    <%= form.file_field :image %>
-  </div>
-
-  <div>
-    <%= form.submit "Update Project" %>
-  </div>
-<% end %>
+</div>

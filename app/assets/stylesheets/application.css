@@ -45,6 +45,8 @@ body {
   min-height: 100vh;
   margin-inline: auto;
   display: flex;
+  flex-direction: column;
+  gap: 2rem;
   align-items: center;
 }
 .main > .card {
@@ -218,7 +220,6 @@ hr {
   max-width: 800px;
   margin: 0 auto;
   padding: 0 2rem;
-  margin-bottom: 3rem;
 }
 
 .progress-step {

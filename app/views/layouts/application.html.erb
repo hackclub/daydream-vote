@@ -28,7 +28,9 @@
         <div class="flash <%= type %>"><%= message %></div>
       <% end %>
     <% end %>
-    
+
+    <%= render partial: "shared/main_nav", locals: { progress: @progress } %>
+
     <%= yield %>
   </body>
 </html>

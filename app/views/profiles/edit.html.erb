@@ -1,73 +1,78 @@
-<h1>Edit Profile</h1>
+<div class="main">
+  <div class="card big">
+    <h1>Edit Profile</h1>
 
-<%= form_with model: @profile_datum, url: profile_path, method: :patch, local: true, data: { turbo: false } do |form| %>
-  <% if @profile_datum.errors.any? %>
-    <div>
-      <h2><%= pluralize(@profile_datum.errors.count, "error") %> prohibited this profile from being saved:</h2>
-      <ul>
-        <% @profile_datum.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+    <%= form_with model: @profile_datum, url: profile_path, method: :patch, local: true, data: { turbo: false } do |form| %>
+      <% if @profile_datum.errors.any? %>
+        <div>
+          <h2><%= pluralize(@profile_datum.errors.count, "error") %> prohibited this profile from being saved:</h2>
+          <ul>
+            <% @profile_datum.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
 
-  <div>
-    <%= form.label :first_name %>
-    <%= form.text_field :first_name %>
+      <div>
+        <%= form.label :first_name %>
+        <%= form.text_field :first_name %>
+      </div>
+
+      <div>
+        <%= form.label :last_name %>
+        <%= form.text_field :last_name %>
+      </div>
+
+      <div>
+        <%= form.label :dob, "Date of Birth" %>
+        <%= form.date_field :dob %>
+      </div>
+
+      <div>
+        <%= form.label :address_line_1, "Address Line 1" %>
+        <%= form.text_field :address_line_1 %>
+      </div>
+
+      <div>
+        <%= form.label :address_line_2, "Address Line 2" %>
+        <%= form.text_field :address_line_2 %>
+      </div>
+
+      <div>
+        <%= form.label :address_city, "City" %>
+        <%= form.text_field :address_city %>
+      </div>
+
+      <div>
+        <%= form.label :address_state, "State" %>
+        <%= form.text_field :address_state %>
+      </div>
+
+      <div>
+        <%= form.label :address_zip_code, "Zip Code" %>
+        <%= form.text_field :address_zip_code %>
+      </div>
+
+      <div>
+        <%= form.label :address_country, "Country" %>
+        <%= form.text_field :address_country %>
+      </div>
+
+      <div>
+        <%= form.label :attending_event, "Which Daydream Event?" %>
+        <%= form.select :attending_event, 
+            options_for_select(
+              ProfileDatum.attending_events.keys, 
+              @profile_datum.attending_event
+            ), 
+            { prompt: "Select an event..." } %>
+      </div>
+
+      <div>
+        <%= form.submit "Continue" %>
+      </div>
+    <% end %>
+
   </div>
-
-  <div>
-    <%= form.label :last_name %>
-    <%= form.text_field :last_name %>
-  </div>
-
-  <div>
-    <%= form.label :dob, "Date of Birth" %>
-    <%= form.date_field :dob %>
-  </div>
-
-  <div>
-    <%= form.label :address_line_1, "Address Line 1" %>
-    <%= form.text_field :address_line_1 %>
-  </div>
-
-  <div>
-    <%= form.label :address_line_2, "Address Line 2" %>
-    <%= form.text_field :address_line_2 %>
-  </div>
-
-  <div>
-    <%= form.label :address_city, "City" %>
-    <%= form.text_field :address_city %>
-  </div>
-
-  <div>
-    <%= form.label :address_state, "State" %>
-    <%= form.text_field :address_state %>
-  </div>
-
-  <div>
-    <%= form.label :address_zip_code, "Zip Code" %>
-    <%= form.text_field :address_zip_code %>
-  </div>
-
-  <div>
-    <%= form.label :address_country, "Country" %>
-    <%= form.text_field :address_country %>
-  </div>
-
-  <div>
-    <%= form.label :attending_event, "Which Daydream Event?" %>
-    <%= form.select :attending_event, 
-        options_for_select(
-          ProfileDatum.attending_events.keys, 
-          @profile_datum.attending_event
-        ), 
-        { prompt: "Select an event..." } %>
-  </div>
-
-  <div>
-    <%= form.submit "Continue" %>
-  </div>
-<% end %>
+</div>
