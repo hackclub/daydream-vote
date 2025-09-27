@@ -721,3 +721,28 @@ html, body {
 .main:has(.team-members-list) {
   width: 100%;
 }
+.project-card {
+  background-color: #fef9dc;
+  border: 2px solid #D3B180;
+  padding: 0rem;
+}
+.project-details, .project-header {
+  padding: 0.5rem 2rem;
+}
+.voting-actions {
+  padding: 0rem;
+  display: flex;
+}
+.vote-checkbox {
+  padding: 0.5rem 2rem;
+  width: 100%;
+  display: flex;
+  border-top: 2px solid #4477A3;
+  cursor: pointer;
+
+}
+
+.vote-checkbox:has(input:checked) {
+    background:#4477A3;
+    color: white;
+}

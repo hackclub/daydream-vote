@@ -15,11 +15,12 @@
     <% if @projects.any? %>
       <div class="projects-list">
         <% @projects.each do |project| %>
+        
           <div class="project-card">
             <div class="project-header">
               <h3><%= project.title %></h3>
               <div class="project-team">
-                by <%= project.users.map(&:email).join(", ") %>
+                by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
               </div>
             </div>
             

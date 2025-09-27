@@ -40,7 +40,7 @@
           <div class="step-label">Vote & Get <span style="white-space: nowrap">T-Shirt</span></div>
         <% end %>
       <% else %>
-        <div class="progress-step #{"active" if current_stage_index >= 4} disabled">
+        <div class="progress-step <%= "active" if current_stage_index >= 4 %>">
           <div class="step-circle"></div>
           <div class="step-label">Vote & Get <span style="white-space: nowrap">T-Shirt</span></div>
         </div>
