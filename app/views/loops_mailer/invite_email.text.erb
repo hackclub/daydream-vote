@@ -2,7 +2,7 @@
   "transactionalId": "cmg2tarrjn43sxj0inqgf5kvw",
   "email": "<%= @invite.email %>",
   "dataVariables": {
-    "sender_name": "<%= @inviter.name %>",
+    "sender_name": "<%= @inviter.profile_datum.first_name %>",
     "project_name": "<%= @project.title %>",
     "event_name": "<%= @project.event&.name || "Daydream" %>",
     "invite_link": "<%= @accept_url %>"
