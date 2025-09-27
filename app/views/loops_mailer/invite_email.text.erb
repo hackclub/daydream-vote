@@ -4,7 +4,7 @@
   "dataVariables": {
     "sender_name": "<%= @inviter.profile_datum.first_name %>",
     "project_name": "<%= @project.title %>",
-    "event_name": "<%= @project.event&.name || "Daydream" %>",
+    "event_name": "<%= @project.attending_event&.name || "Daydream" %>",
     "invite_link": "<%= @accept_url %>"
   }
 }
