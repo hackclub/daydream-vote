@@ -28,6 +28,7 @@ body {
 
   font-family: "Atkinson Hyperlegible", sans-serif;
   color: rgb(139, 69, 19);
+  counter-reset: step-counter;
 }
 
 .card {
@@ -40,11 +41,14 @@ body {
 }
 .main {
   max-width: 64rem;
-  width: max-content;
-  margin-inline: auto;
+  width: 100%;
   min-height: 100vh;
+  margin-inline: auto;
   display: flex;
   align-items: center;
+}
+.main > .card {
+  margin-inline: 2rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -60,11 +64,32 @@ p {
   font-size: 1.5rem;
   font-weight: 700;
   margin-top: 1.5rem;
+  position: relative;
+  padding-left: 2.5rem;
+  counter-increment: step-counter;
 }
+
+.step::before {
+  content: counter(step-counter) ". ";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 .details {
   opacity: 0.8;
-  margin-left: 3rem;
+  margin-left: 2.5rem;
   margin-top: -0.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.details::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin-right: 0.5rem;
 }
 
 hr {
@@ -79,22 +104,26 @@ hr {
   filter: brightness(110%);
 }
 
-.shirt-right {
-  position: relative;
-  width: 100%;
+.shirt-section {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
-.shirt-right::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translate(25%, -50%);
-  height: 150%;
-  aspect-ratio: 1;
-  background-image: url("/shirt.png");
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+
+.shirt-content {
+  flex: 1;
+  min-width: 300px;
+}
+
+.shirt-image {
+  flex-shrink: 0;
+  width: 100px;
+}
+
+.shirt-image img {
+  width: 100%;
+  height: auto;
+  transform: scale(125%);
 }
 
 .divider {
