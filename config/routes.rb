@@ -5,16 +5,18 @@ Rails.application.routes.draw do
   post "projects/invite_members", to: "projects#create_invite"
   get "projects/vote"
   delete "projects/invites/:invite_id", to: "projects#delete_invite", as: :delete_project_invite
-  resource :project, only: [:edit, :update]
-  resource :profile, only: [:edit, :update]
+  resource :project, only: [ :edit, :update ] do
+    get "submit"
+  end
+  resource :profile, only: [ :edit, :update ]
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
-  
-  resources :sessions, only: [:create, :destroy]
+
+  resources :sessions, only: [ :create, :destroy ]
   get "sessions/new", to: "static_pages#landing", as: :new_session
   get "verify_token/:token_id", to: "sessions#verify_token", as: :verify_token
-  
+
   root "static_pages#landing"
-  
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
