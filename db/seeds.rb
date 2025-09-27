@@ -386,16 +386,26 @@ if projects_needing_images.count > 0
   failure_count = Concurrent::AtomicFixnum.new(0)
   skipped_count = Concurrent::AtomicFixnum.new(0)
 
-  # Thread pool for downloading images
+  # Create a thread-safe work queue with all projects
+  work_queue = Queue.new
+  projects_needing_images.each { |project| work_queue << project }
+  
+  # Thread pool for downloading images  
   thread_pool_size = 32
-  puts "Using #{thread_pool_size} threads for concurrent downloads..."
+  puts "Using #{thread_pool_size} worker threads with work queue..."
+  puts "Queue size: #{work_queue.size} projects"
 
-  # Process projects in batches with threads
-  projects_needing_images.find_in_batches(batch_size: 50) do |batch|
-    threads = []
-    
-    batch.each do |project|
-      thread = Thread.new do
+  # Create worker threads that continuously pull from the queue
+  threads = Array.new(thread_pool_size) do |thread_id|
+    Thread.new do
+      loop do
+        begin
+          project = work_queue.pop(true) # non-blocking pop, raises ThreadError when empty
+        rescue ThreadError
+          # Queue is empty, exit thread
+          break
+        end
+
         begin
           thumbnail_data_array = airtable_image_lookup[project.airtable_record_id]
           
@@ -417,7 +427,7 @@ if projects_needing_images.count > 0
           content_type = thumbnail_data['type'] || 'image/png'
           file_size = thumbnail_data['size'] || 'unknown'
           
-          puts "  📥 #{filename} for \"#{project.title}\" (#{file_size} bytes)"
+          puts "  📥 [T#{thread_id}] #{filename} for \"#{project.title}\" (#{file_size} bytes)"
           
           # Skip URL validations to prevent validation failures during image attachment
           project.skip_url_validations = true
@@ -433,22 +443,14 @@ if projects_needing_images.count > 0
           
         rescue => e
           failure_count.increment
-          puts "  ❌ Failed: \"#{project.title}\" - #{e.message}"
+          puts "  ❌ [T#{thread_id}] Failed: \"#{project.title}\" - #{e.message}"
         end
       end
-      
-      threads << thread
-      
-      # Limit concurrent threads
-      if threads.length >= thread_pool_size
-        threads.each(&:join)
-        threads.clear
-      end
     end
-    
-    # Wait for remaining threads in this batch
-    threads.each(&:join)
   end
+
+  # Wait for all worker threads to complete
+  threads.each(&:join)
 
   puts "\n" + "="*60
   puts "🎉 IMAGE SYNC COMPLETE"

@@ -5,7 +5,7 @@
 
     <h1>Vote!</h1>
 
-    <% unless @event.voting_enabled? %>
+    <% if !@event.voting_enabled? %>
       <div class="alert alert-info">
         <p><strong>Voting is not turned on by the organizers yet</strong></p>
         <p><%= @voting_disabled_message %></p>
@@ -50,17 +50,17 @@
                 </div>
               </div>
             
-            <div class="project-details">
-              <p><%= project.description %></p>
+              <div class="project-details">
+                <p><%= project.description %></p>
+                
+                <% if @event.voting_enabled? %>
+                  <div class="project-links">
+                    <%= link_to "Play on Itch.io", project.itchio_url, target: "_blank", class: "project-link" %>
+                    <%= link_to "View Code", project.repo_url, target: "_blank", class: "project-link" %>
+                  </div>
+                <% end %>
+              </div>
               
-              <% if @event.voting_enabled? %>
-                <div class="project-links">
-                  <%= link_to "Play on Itch.io", project.itchio_url, target: "_blank", class: "project-link" %>
-                  <%= link_to "View Code", project.repo_url, target: "_blank", class: "project-link" %>
-                </div>
-              <% end %>
-            </div>
-            
               <% if @event.voting_enabled? && signed_in? %>
                 <div class="voting-actions">
                   <label class="vote-checkbox">
@@ -76,10 +76,7 @@
       
       <% if @event.voting_enabled? && signed_in? %>
         <div class="voting-form">
-          <form action="#" method="post" data-turbo="false">
-            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-            <button type="submit" class="btn btn-primary">Submit Votes</button>
-          </form>
+          <button type="submit" class="btn btn-primary">Submit Votes</button>
         </div>
         <% end %>
       <% end %>
