@@ -1,65 +1,65 @@
 class ProjectsController < ApplicationController
   before_action :require_authentication
-  before_action :set_project, only: [:edit, :update]
-  
+  before_action :set_project, only: [ :edit, :update ]
+
   def select_role
   end
-  
+
   def wait_for_invite
     @pending_invites = CreatorPositionInvite.where(email: current_user.email)
     @accepted_projects = current_user.projects.includes(:creator_positions)
   end
-  
+
   def invite_members
     @project = current_user.projects.first
     redirect_to edit_project_path unless @project
   end
-  
+
   def create_invite
     @project = current_user.projects.first
     redirect_to edit_project_path and return unless @project
-    
+
     email = params[:email]&.strip&.downcase
-    
+
     if email.blank?
       flash[:alert] = "Email is required"
       redirect_to projects_invite_members_path and return
     end
-    
+
     # Check if user is already a team member
     if @project.users.joins(:creator_positions).where(users: { email: email }).exists?
       flash[:alert] = "User is already a team member"
       redirect_to projects_invite_members_path and return
     end
-    
+
     # Check if invite already exists
     if @project.creator_position_invites.where(email: email).exists?
       flash[:alert] = "Invite already sent to this email"
       redirect_to projects_invite_members_path and return
     end
-    
+
     # Create the invite
     invite = @project.creator_position_invites.create!(
       email: email,
       invited_by: current_user
     )
-    
+
     flash[:notice] = "Invite sent successfully to #{email}"
     redirect_to projects_invite_members_path
   rescue ActiveRecord::RecordInvalid => e
     flash[:alert] = "Failed to send invite: #{e.message}"
     redirect_to projects_invite_members_path
   end
-  
+
   def vote
     # Get projects from users at the same event, excluding current user's projects
     current_user_event = current_user.profile_datum&.attending_event
     redirect_to edit_profile_path and return unless current_user_event
-    
+
     # Find all users at the same event
     users_at_event = User.joins(:profile_datum)
                          .where(profile_data: { attending_event: current_user_event })
-    
+
     # Get projects from those users, excluding ones current user is involved in
     @projects = Project.joins(:creator_positions)
                       .joins("JOIN users ON creator_positions.user_id = users.id")
@@ -69,31 +69,31 @@ class ProjectsController < ApplicationController
                       .distinct
                       .includes(:users, :creator_positions)
   end
-  
+
   def delete_invite
     @project = current_user.projects.first
     redirect_to edit_project_path and return unless @project
-    
+
     invite = @project.creator_position_invites.find(params[:invite_id])
-    
+
     # Only the invite creator can delete the invite
     unless invite.invited_by == current_user
       flash[:alert] = "You can only delete invites you created"
       redirect_to projects_invite_members_path and return
     end
-    
+
     invite.destroy!
-    
+
     flash[:notice] = "Invite deleted successfully"
     redirect_to projects_invite_members_path
   rescue ActiveRecord::RecordNotFound
     flash[:alert] = "Invite not found"
     redirect_to projects_invite_members_path
   end
-  
+
   def edit
   end
-  
+
   def update
     # If it's a new project, we need to save it and create the creator position
     if @project.new_record?
@@ -117,16 +117,16 @@ class ProjectsController < ApplicationController
       end
     end
   end
-  
+
   private
-  
+
   def require_authentication
     unless signed_in?
       flash[:alert] = "Please sign in first"
       redirect_to new_session_path
     end
   end
-  
+
   def require_no_pending_invites
     @project = current_user.projects.first
     if @project&.has_pending_invites?
@@ -134,17 +134,17 @@ class ProjectsController < ApplicationController
       redirect_to projects_invite_members_path
     end
   end
-  
+
   def set_project
     @project = current_user.projects.first || build_new_project_for_user
   end
-  
+
   def build_new_project_for_user
     project = Project.new
     # Don't save yet - just build it for the form
     project
   end
-  
+
   def project_params
     params.require(:project).permit(:title, :description, :itchio_url, :repo_url, :image)
   end
