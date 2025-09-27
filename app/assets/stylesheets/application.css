@@ -333,6 +333,9 @@ hr {
 .standard-form .wide {
   grid-column: span 6;
 }
+.standard-form .wide input {
+  width: 100%;
+}
 .standard-form > .thin {
   grid-column: span 2;
 }
