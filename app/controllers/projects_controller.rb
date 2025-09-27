@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
   before_action :require_authentication
-  before_action :set_project, only: [ :edit, :update ]
+  before_action :set_project, only: [ :edit, :update, :submit ]
 
   def select_role
   end
@@ -92,6 +92,9 @@ class ProjectsController < ApplicationController
   end
 
   def edit
+  end
+
+  def submit
   end
 
   def update
