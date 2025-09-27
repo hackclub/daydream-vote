@@ -4,6 +4,13 @@
     
     <p><strong>Event Management Dashboard</strong></p>
     
+    <p>Voting is currently <strong><%= @event.voting_enabled? ? "enabled" : "disabled" %></strong> for this event.</p>
+
+    <%= button_to @event.voting_enabled? ? "Disable Voting" : "Enable Voting", 
+        organize_toggle_voting_path(@event), 
+        method: :post,
+        data: { confirm: @event.voting_enabled? ? "Are you sure you want to disable voting? This will prevent users from casting votes." : "Are you sure you want to enable voting? This will allow users to cast votes." } %>
+    
     <div class="organize-tabs">
       <h2>Submitted Projects (<%= @visible_projects.count %> visible, <%= @hidden_projects.count %> hidden)</h2>
     </div>

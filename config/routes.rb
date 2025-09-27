@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     scope "/:event_slug" do
       get "organize", to: "organize#index", as: :organize_event
       patch "organize/projects/:project_id/hide", to: "organize#hide_project", as: :organize_hide_project
+      post "organize/toggle_voting", to: "organize#toggle_voting", as: :organize_toggle_voting
       patch "organize/projects/:project_id/unhide", to: "organize#unhide_project", as: :organize_unhide_project
     end
   end
