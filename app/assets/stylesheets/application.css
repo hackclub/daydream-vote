@@ -250,6 +250,11 @@ hr {
   border-color: #E472AB;
 }
 
+.progress-step.current .step-circle {
+  border-color: #E472AB;
+  background-color: #E472AB;
+}
+
 .step-label {
   position: absolute;
   top: 35px;
