@@ -25,7 +25,7 @@ class LoopsMailer < ApplicationMailer
     @invite = invite
     @project = invite.project
     @inviter = invite.invited_by
-    @accept_url = accept_invite_url(token: invite.token)
+    @accept_url = show_invite_url(token: invite.token)
 
     mail(
       to: @invite.email,

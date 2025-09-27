@@ -7,7 +7,10 @@ class SessionsController < ApplicationController
       render :new and return
     end
 
-    user = User.find_or_create_by(email: email)
+    user = User.find_or_create_by(email: email) do |new_user|
+      assign_organizer_positions(new_user)
+    end
+    
     token = user.tokens.create!(expires_at: 3.hours.from_now)
 
     LoopsMailer.sign_in_email(user.email, token.id).deliver_later
@@ -33,6 +36,9 @@ class SessionsController < ApplicationController
       token.mark_as_used!
       session[:user_id] = token.user.id
 
+      # Check if user should be auto-assigned as organizer for any events
+      assign_organizer_positions(token.user)
+
       # Check if profile data exists
       if token.user.profile_datum.nil?
         flash[:notice] = "Successfully signed in! Please complete your profile information."
@@ -44,6 +50,14 @@ class SessionsController < ApplicationController
     else
       flash[:alert] = "Invalid or expired login link"
       redirect_to new_session_path
+    end
+  end
+  
+  private
+  
+  def assign_organizer_positions(user)
+    Event.where(owner_email: user.email).each do |event|
+      OrganizerPosition.find_or_create_by(user: user, event: event)
     end
   end
 end

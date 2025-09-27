@@ -9,8 +9,8 @@ class ProjectsController < ApplicationController
     @pending_invites = CreatorPositionInvite.where(email: current_user.email)
     @accepted_projects = current_user.projects.includes(:creator_positions)
 
-    if turbo_frame_request_id == "invite_status"
-      render partial: "invite_status"
+    if request.headers['Turbo-Frame'] == "invite_status"
+      render partial: "invite_status", layout: false
     end
   end
 
@@ -144,31 +144,103 @@ class ProjectsController < ApplicationController
     redirect_to projects_invite_members_path
   end
 
-  def accept_invite
-    invite = CreatorPositionInvite.find_by(token: params[:token])
+  def show_invite
+    @invite = CreatorPositionInvite.find_by(token: params[:token])
 
-    unless invite
+    unless @invite
       flash[:alert] = "Invite not found or expired"
       redirect_to root_path and return
     end
 
-    if invite.expired?
+    if @invite.expired?
       flash[:alert] = "This invite has expired"
       redirect_to root_path and return
     end
 
+    # Auto-sign in user by email if not already signed in
+    unless signed_in?
+      user = User.find_or_create_by(email: @invite.email.strip.downcase) do |u|
+        u.email = @invite.email.strip.downcase
+      end
+      session[:user_id] = user.id
+      @current_user = user
+    end
+
+    # Check if current user's email matches invite email
+    unless current_user.email == @invite.email.strip.downcase
+      flash[:alert] = "This invite is for #{@invite.email}. Please sign in with that email."
+      redirect_to new_session_path and return
+    end
+
     # Check if user is already part of this project
-    if invite.project.users.include?(current_user)
+    if @invite.project.users.include?(current_user)
+      flash[:notice] = "You are already part of this project"
+      redirect_to edit_project_path and return
+    end
+  end
+
+  def accept_invite
+    @invite = CreatorPositionInvite.find_by(token: params[:token])
+
+    unless @invite
+      flash[:alert] = "Invite not found or expired"
+      redirect_to root_path and return
+    end
+
+    if @invite.expired?
+      flash[:alert] = "This invite has expired"
+      redirect_to root_path and return
+    end
+
+    # Auto-sign in user by email if not already signed in
+    unless signed_in?
+      user = User.find_or_create_by(email: @invite.email.strip.downcase) do |u|
+        u.email = @invite.email.strip.downcase
+      end
+      session[:user_id] = user.id
+      @current_user = user
+    end
+
+    # Check if current user's email matches invite email
+    unless current_user.email == @invite.email.strip.downcase
+      flash[:alert] = "This invite is for #{@invite.email}. Please sign in with that email."
+      redirect_to root_path and return
+    end
+
+    # Check if user is already part of this project
+    if @invite.project.users.include?(current_user)
       flash[:notice] = "You are already part of this project"
       redirect_to edit_project_path and return
     end
 
-    if invite.accept!(current_user)
-      flash[:notice] = "Successfully joined #{invite.project.title}!"
-      redirect_to edit_project_path
+    if @invite.accept!(current_user)
+      redirect_to invite_accepted_path(@invite.project.id)
     else
       flash[:alert] = "Failed to accept invite"
       redirect_to root_path
+    end
+  end
+
+  def reject_invite
+    @invite = CreatorPositionInvite.find_by(token: params[:token])
+
+    unless @invite
+      flash[:alert] = "Invite not found or expired"
+      redirect_to root_path and return
+    end
+
+    @invite.destroy!
+    flash[:notice] = "Invite declined"
+    redirect_to root_path
+  end
+
+  def invite_accepted
+    @project = Project.find(params[:project_id])
+    
+    # Verify current user is part of this project
+    unless @project.users.include?(current_user)
+      flash[:alert] = "You are not part of this project"
+      redirect_to root_path and return
     end
   end
 

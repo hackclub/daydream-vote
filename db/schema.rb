@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_27_171923) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_27_180122) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -70,6 +70,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_171923) do
     t.index ["name"], name: "index_events_on_name", unique: true
   end
 
+  create_table "organizer_positions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "event_id", null: false
+    t.integer "role"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_organizer_positions_on_event_id"
+    t.index ["user_id", "event_id"], name: "index_organizer_positions_on_user_id_and_event_id", unique: true
+    t.index ["user_id"], name: "index_organizer_positions_on_user_id"
+  end
+
   create_table "prechecks", force: :cascade do |t|
     t.integer "project_id", null: false
     t.integer "status"
@@ -105,6 +116,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_171923) do
     t.string "aasm_state"
     t.datetime "submitted_at"
     t.integer "attending_event_id", null: false
+    t.boolean "hidden", default: false, null: false
     t.index ["attending_event_id"], name: "index_projects_on_attending_event_id"
   end
 
@@ -140,6 +152,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_171923) do
   add_foreign_key "creator_position_invites", "users", column: "invited_by_id"
   add_foreign_key "creator_positions", "projects"
   add_foreign_key "creator_positions", "users"
+  add_foreign_key "organizer_positions", "events"
+  add_foreign_key "organizer_positions", "users"
   add_foreign_key "prechecks", "projects"
   add_foreign_key "profile_data", "users"
   add_foreign_key "projects", "events", column: "attending_event_id"

@@ -1,0 +1,57 @@
+<div class="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+  <div class="max-w-2xl w-full">
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div class="bg-gradient-to-r from-purple-600 to-blue-600 p-8 text-white text-center">
+        <h1 class="text-3xl font-bold mb-2">You've been invited!</h1>
+        <p class="text-purple-100">Join a game development team</p>
+      </div>
+      
+      <div class="p-8">
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4"><%= @invite.project.title %></h2>
+          <p class="text-gray-600 text-lg mb-6"><%= @invite.project.description %></p>
+          
+          <div class="bg-gray-50 rounded-lg p-6 mb-6">
+            <h3 class="font-semibold text-gray-900 mb-4">Project Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="font-medium text-gray-700">Event:</span>
+                <span class="text-gray-600"><%= @invite.project.attending_event.name if @invite.project.attending_event %></span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700">Team size:</span>
+                <span class="text-gray-600"><%= @invite.project.users.count + 1 %> member<%= 's' if @invite.project.users.count != 0 %></span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700">Invited by:</span>
+                <span class="text-gray-600"><%= @invite.invited_by.email %></span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700">Expires:</span>
+                <span class="text-gray-600"><%= @invite.expires_at.strftime("%B %d, %Y at %l:%M %p") %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <%= form_with url: accept_invite_path(@invite.token), local: true, method: :post do |form| %>
+            <%= form.submit "Accept Invitation", 
+                class: "bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 cursor-pointer text-center" %>
+          <% end %>
+          
+          <%= form_with url: reject_invite_path(@invite.token), local: true, method: :post do |form| %>
+            <%= form.submit "Decline", 
+                class: "bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 cursor-pointer text-center" %>
+          <% end %>
+        </div>
+        
+        <div class="mt-6 text-center">
+          <p class="text-sm text-gray-500">
+            By accepting this invitation, you'll become a collaborator on this project.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

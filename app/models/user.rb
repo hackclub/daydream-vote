@@ -4,6 +4,8 @@ class User < ApplicationRecord
   has_one :profile_datum, dependent: :destroy
   has_many :creator_positions, dependent: :destroy
   has_many :projects, through: :creator_positions
+  has_many :organizer_positions, dependent: :destroy
+  has_many :organized_events, through: :organizer_positions, source: :event
   has_many :votes, dependent: :destroy
   has_many :voted_projects, through: :votes, source: :project
 

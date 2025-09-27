@@ -1,0 +1,161 @@
+<div class="main">
+  <div class="card big">
+    <h1>Organize <%= @event.name %></h1>
+    
+    <p><strong>Event Management Dashboard</strong></p>
+    
+    <div class="organize-tabs">
+      <h2>Submitted Projects (<%= @visible_projects.count %> visible, <%= @hidden_projects.count %> hidden)</h2>
+    </div>
+    
+    <% if @visible_projects.any? %>
+      <h3>Visible Projects</h3>
+      <div class="projects-list">
+        <% @visible_projects.each do |project| %>
+          <div class="project-card organize-project">
+            <div class="project-header">
+              <h4><%= project.title %></h4>
+              <div class="project-team">
+                by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+              </div>
+              <div class="project-stats">
+                <span class="vote-count"><%= pluralize(project.votes.count, 'vote') %></span>
+                <span class="status-badge <%= project.aasm_state %>"><%= project.aasm_state.humanize %></span>
+              </div>
+            </div>
+            
+            <div class="project-details">
+              <p><%= truncate(project.description, length: 200) %></p>
+              
+              <div class="project-links">
+                <%= link_to "Play", project.itchio_url, target: "_blank", class: "project-link" %>
+                <%= link_to "Code", project.repo_url, target: "_blank", class: "project-link" %>
+              </div>
+            </div>
+            
+            <div class="project-actions">
+              <%= link_to "Hide Project", organize_hide_project_path(@event, project), 
+                  method: :patch, 
+                  class: "btn btn-danger btn-sm",
+                  data: { 
+                    confirm: "Are you sure you want to hide this project? It will no longer be visible to voters." 
+                  } %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="no-projects">
+        <p>No visible projects yet.</p>
+      </div>
+    <% end %>
+    
+    <% if @hidden_projects.any? %>
+      <h3 style="margin-top: 2rem;">Hidden Projects</h3>
+      <div class="projects-list">
+        <% @hidden_projects.each do |project| %>
+          <div class="project-card organize-project hidden-project">
+            <div class="project-header">
+              <h4><%= project.title %></h4>
+              <div class="project-team">
+                by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+              </div>
+              <div class="project-stats">
+                <span class="vote-count"><%= pluralize(project.votes.count, 'vote') %></span>
+                <span class="status-badge hidden">Hidden</span>
+              </div>
+            </div>
+            
+            <div class="project-details">
+              <p><%= truncate(project.description, length: 200) %></p>
+              
+              <div class="project-links">
+                <%= link_to "Play", project.itchio_url, target: "_blank", class: "project-link" %>
+                <%= link_to "Code", project.repo_url, target: "_blank", class: "project-link" %>
+              </div>
+            </div>
+            
+            <div class="project-actions">
+              <%= link_to "Unhide Project", organize_unhide_project_path(@event, project), 
+                  method: :patch, 
+                  class: "btn btn-success btn-sm" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    
+    <div class="actions" style="margin-top: 2rem;">
+      <%= link_to "Back to Event", event_vote_path(@event.name), class: "btn" %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .organize-project {
+    border-left: 4px solid #28a745;
+    margin-bottom: 1rem;
+  }
+  
+  .organize-project.hidden-project {
+    border-left-color: #dc3545;
+    opacity: 0.7;
+  }
+  
+  .project-stats {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+  
+  .status-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+  
+  .status-badge.draft {
+    background-color: #ffc107;
+    color: #000;
+  }
+  
+  .status-badge.submitted {
+    background-color: #28a745;
+    color: #fff;
+  }
+  
+  .status-badge.hidden {
+    background-color: #dc3545;
+    color: #fff;
+  }
+  
+  .vote-count {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+  
+  .project-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+  }
+  
+  .btn-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+  }
+</style>

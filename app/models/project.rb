@@ -45,6 +45,17 @@ class Project < ApplicationRecord
   def has_pending_invites?
     creator_position_invites.where("expires_at > ?", Time.current).exists?
   end
+  
+  scope :visible, -> { where(hidden: false) }
+  scope :hidden, -> { where(hidden: true) }
+  
+  def hide!
+    update!(hidden: true)
+  end
+  
+  def unhide!
+    update!(hidden: false)
+  end
 
   private
 

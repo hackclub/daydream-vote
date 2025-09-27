@@ -5,8 +5,19 @@ Rails.application.routes.draw do
   post "projects/invite_members", to: "projects#create_invite"
   get "events/:event/vote", to: "projects#vote", as: :event_vote
   post "events/:event/make_vote_selection", to: "projects#make_vote_selection", as: :event_make_vote_selection
+  
+  scope :events do
+    scope "/:event_slug" do
+      get "organize", to: "organize#index", as: :organize_event
+      patch "organize/projects/:project_id/hide", to: "organize#hide_project", as: :organize_hide_project
+      patch "organize/projects/:project_id/unhide", to: "organize#unhide_project", as: :organize_unhide_project
+    end
+  end
   delete "projects/invites/:invite_id", to: "projects#delete_invite", as: :delete_project_invite
-  get "accept_invite/:token", to: "projects#accept_invite", as: :accept_invite
+  get "invite/:token", to: "projects#show_invite", as: :show_invite
+  post "accept_invite/:token", to: "projects#accept_invite", as: :accept_invite
+  post "reject_invite/:token", to: "projects#reject_invite", as: :reject_invite
+  get "invite_accepted/:project_id", to: "projects#invite_accepted", as: :invite_accepted
   resource :project, only: [ :edit, :update ] do
     get "review"
     post "submit", to: "projects#submit", as: :submit
