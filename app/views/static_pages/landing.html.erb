@@ -29,8 +29,8 @@
 
     </div>
 
-    <% if current_user.projects.any? %>
-        <% current_user.projects.each do |project| %>
+    <% if @projects&.any? %>
+        <% @projects.each do |project| %>
             <div class="card">
                 <h2><%= project.title %></h2>
                 <p><%= project.description %></p>
