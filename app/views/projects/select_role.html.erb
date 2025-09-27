@@ -5,31 +5,31 @@
     <h1>Project Submission</h1>
     <p>How would you like to submit your project?</p>
 
-    <div class="card">
+    <%= link_to edit_project_path, class: "card light project-role-card" do %>
       <h3 style="text-align: left;">
-        <%= link_to edit_project_path, class: "project-role-option" do %>
+        <span class="project-role-option">
           I will submit the project for my group →
-        <% end %>
+        </span>
       </h3>
       <p>You'll create the project submission and can add team members later.</p>
-    </div>
+    <% end %>
 
-    <div class="card" style="margin-top: 2rem;">
+    <%= link_to projects_wait_for_invite_path, class: "card light project-role-card", style: "margin-top: 2rem;" do %>
       <h3 style="text-align: left;">
-        <%= link_to projects_wait_for_invite_path, class: "project-role-option" do %>
+        <span class="project-role-option">
           My team member will submit and add me →
-        <% end %>
+        </span>
       </h3>
       <p>Someone else on your team will create the submission and invite you to join.</p>
-    </div>
+    <% end %>
 
-    <div class="card" style="margin-top: 2rem; margin-bottom: 1rem;">
+    <%= link_to edit_project_path, class: "card light project-role-card", style: "margin-top: 2rem; margin-bottom: 1rem;" do %>
       <h3 style="text-align: left;">
-        <%= link_to edit_project_path, class: "project-role-option" do %>
+        <span class="project-role-option">
           I am solo →
-        <% end %>
+        </span>
       </h3>
       <p>You're working on this project by yourself.</p>
-    </div>
+    <% end %>
   </div>
 </div>

@@ -39,6 +39,10 @@ body {
 .card.big {
   padding: 1rem 2rem;
 }
+.card.light {
+  background-color: #fffef2;
+  border: 1px solid #e9d8b9;
+}
 .main {
   max-width: 64rem;
   width: 100%;
@@ -444,4 +448,45 @@ html, body {
 .error h2 {
   color: #841040;
   font-family: "Atkinson Hyperlegible";
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.flash {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fef9dc;
+  border: 2px solid #D3B180;
+  border-top: none;
+  padding: 0.5rem 2rem;
+  animation: fade-out 2s;
+  animation-delay: 1s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+.project-role-option {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgb(139, 69, 19);
+  text-decoration: none;
+}
+.project-role-card {
+  text-decoration: none;
+  display: block;
+  color: inherit;
+}
+.project-role-card:hover .project-role-option {
+  text-decoration: underline;
+}
+.project-role-card:hover {
+  background-color: #fffffa;
+  border: 1px solid #eee1c9;
+}
+.project-role-card:hover h3, .project-role-card:hover p {
+  filter: brightness(1.2);
 }
