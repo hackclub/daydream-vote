@@ -2,8 +2,6 @@
   <% if signed_in? %>
     Hi, <%= current_user.profile_datum.first_name %>
     <div class="divider"></div>
-    <%= link_to "Edit profile", edit_profile_path, data: { turbo_frame: "_top" } %>
-    <div class="divider"></div>
     <%= button_to "Sign Out", session_path(current_user), method: :delete, data: { turbo_frame: "_top" } %>
   <% end %>
 <% end %>

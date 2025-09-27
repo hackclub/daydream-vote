@@ -1,3 +1,5 @@
+<% @progress = :your_info %>
+
 <div class="main">
   <div class="card big" style="margin-bottom: 5rem">
 
@@ -16,15 +18,15 @@
       <% end %>
 
       <div class="standard-form"> 
-        <div class="wide">
-          <%= form.label :attending_event, "Which Daydream Event are you attending?" %>
-          <%= form.select :attending_event, 
-              options_for_select(
-                ProfileDatum.attending_events.keys, 
-                @profile_datum.attending_event
-              ), 
-              { prompt: "Select an event..." } %>
-        </div>
+          <div class="wide">
+            <%= form.label :attending_event, "Which Daydream Event are you attending?" %>
+            <%= form.select :attending_event, 
+                options_for_select(
+                  ProfileDatum.attending_events.keys, 
+                  @profile_datum.attending_event
+                ), 
+                { prompt: "Select an event..." }, { disabled:  @profile_datum.attending_event.present? } %>
+          </div>
 
         <hr class="wide">
 
@@ -79,25 +81,6 @@
 
         <!-- had Amp fix up the labels here so you can click the labels to check
           the boxes, but hopefully the changes it made don't break anything -->
-
-        <div class="wide radio">
-          <%= form.label :submission_role, "Who will submit for the group?" %>
-          
-          <div class="radio-option">
-            <%= form.radio_button :submission_role, "i_will_submit", id: "submission_role_i_will_submit" %>
-            <%= label_tag "submission_role_i_will_submit", "I will submit the Itch.io and GitHub links for the group" %>
-          </div>
-          
-          <div class="radio-option">
-            <%= form.radio_button :submission_role, "teammate_will_submit", id: "submission_role_teammate_will_submit" %>
-            <%= label_tag "submission_role_teammate_will_submit", "My team member will submit it and add me to the project" %>
-          </div>
-          
-          <div class="radio-option">
-            <%= form.radio_button :submission_role, "solo", id: "submission_role_solo" %>
-            <%= label_tag "submission_role_solo", "I'm solo" %>
-          </div>
-        </div>
 
         <div class="wide">
           <div class="checkbox-option">
