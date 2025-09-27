@@ -48,9 +48,10 @@ body {
   flex-direction: column;
   gap: 2rem;
   align-items: center;
+  width: max-content;
 }
 .main > .card {
-  margin-inline: 2rem;
+  margin: 3rem 2rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -95,7 +96,7 @@ p {
 }
 
 hr {
-  color: rgba(131, 55, 16, 0.2);
+  color: #e5d2b3;
   margin-inline: 3rem;
 }
 
@@ -288,3 +289,106 @@ hr {
     max-width: none;
   }
 }
+<<<<<<< HEAD
+=======
+
+.standard-form {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem 1rem;
+  max-width: 700px;
+}
+.standard-form .wide {
+  grid-column: span 6;
+}
+.standard-form > .thin {
+  grid-column: span 2;
+}
+.standard-form > div:not(.wide):not(.thin) {
+  grid-column: span 3;
+}
+.standard-form label {
+  display: block;
+}
+.standard-form > div > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+.standard-form *:not(hr) {
+  font-size: 1.25rem;
+  font-family: 'Atkinson Hyperlegible';
+  color: rgb(139, 69, 19);
+}
+.standard-form input, select {
+  border: 2px solid #f2e8ca;
+  background-color: #fffef2;
+  padding: 0.5rem 1rem;
+}
+
+.standard-form input[type="radio"],
+.standard-form input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+  padding: 0;
+  vertical-align: middle;
+  margin-block: 0.5rem;
+}
+
+.standard-form .radio-option,
+.standard-form .checkbox-option {
+  display: flex;
+  align-items: center;
+}
+
+.standard-form .radio-option label,
+.standard-form .checkbox-option label {
+  display: inline;
+  margin-left: 0.5rem;
+}
+.standard-form .radio > label {
+  margin-bottom: 1rem;
+}
+
+.submit-wrapper {
+  display: block;
+  width: 100%;
+  background-color: #E472AB;
+  border-bottom: 2px solid #A65A80;
+  color: white !important;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-family: 'Atkinson Hyperlegible', sans-serif;
+  cursor: pointer;
+  margin: 1rem auto;
+  position: relative;
+  overflow: visible;
+  transition: all 0.1s ease;
+  grid-column: span 6 !important;
+  margin-bottom: -3rem;
+}
+.submit-wrapper:hover {
+  box-shadow: 0 2px 0 0 #A65A80;
+  transform: translateY(-2px);
+}
+.submit-wrapper:active {
+  transform: translateY(0.125rem);
+  border-bottom: transparent;
+  box-shadow: none;
+}
+.submit-clouds {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  pointer-events: none;
+}
+.submit-wrapper .submit-button-elem {
+  padding: 1rem 1rem;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+>>>>>>> 24f39be (Edit page CSS + more reusables)
