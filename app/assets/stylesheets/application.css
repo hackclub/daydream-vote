@@ -212,6 +212,7 @@ hr {
   border-top: none;
   border-left: none;
   border-right: none;
+  font-family: "Atkinson Hyperlegible" !important;
 }
 
 .submit-button:hover {
@@ -554,6 +555,7 @@ html, body {
 }
 .flash {
   position: fixed;
+  z-index: 10000;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
