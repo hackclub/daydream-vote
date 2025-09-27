@@ -434,3 +434,14 @@ html, body {
   color: #4477a3;
   cursor: pointer;
 }
+
+.error {
+  background-color: #fedce2;
+  border: 1px solid #d37e8c;
+  color: #8b133b;
+  margin-bottom: 1.5rem;
+}
+.error h2 {
+  color: #841040;
+  font-family: "Atkinson Hyperlegible";
+}
