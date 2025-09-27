@@ -32,10 +32,7 @@ class GitRepoChecker
   def check_github_repo(owner, repo)
     github_service = GithubProxyService.new
     
-    # Get repository info to check if it exists
-    repo_info = github_service.get_repository_info(owner, repo)
-    
-    # Get languages to check if repo has files (excluding txt & zip)
+    # Get languages to check if repo exists and has files (excluding txt & zip)
     languages = github_service.get_repository_languages(owner, repo)
     
     # If languages hash is empty, repo might only have txt/zip files or be empty
@@ -44,16 +41,53 @@ class GitRepoChecker
     
     # Repo exists and has code files
     true
+  rescue ArgumentError => e
+    # API key missing, fall back to git ls-remote
+    Rails.logger.warn "GitHub proxy API key missing, falling back to git ls-remote for #{owner}/#{repo}"
+    github_url = "https://github.com/#{owner}/#{repo}"
+    check_with_git_remote(github_url)
   rescue GithubProxyService::GithubProxyError => e
     Rails.logger.error "GitHub proxy error for #{owner}/#{repo}: #{e.message}"
     false
   end
 
   def check_with_git_remote(url)
-    # Run git ls-remote with reduced timeout (3 seconds)
-    result = system("timeout 3 git ls-remote #{url.shellescape} HEAD > /dev/null 2>&1")
+    # Use Open3 for safer process execution with proper resource limits
+    require 'open3'
+    require 'timeout'
     
-    # system returns true if command succeeded (exit status 0)
-    result
+    # Validate URL format to prevent command injection
+    return false unless valid_git_url?(url)
+    
+    begin
+      Timeout::timeout(3) do
+        # Use Open3.capture3 for safer execution
+        stdout, stderr, status = Open3.capture3(
+          'git', 'ls-remote', '--tags', url,
+          stdin_data: '',
+          binmode: true
+        )
+        
+        # Check if command succeeded
+        status.success?
+      end
+    rescue Timeout::Error
+      Rails.logger.warn "Git ls-remote timeout for #{url}"
+      false
+    rescue => e
+      Rails.logger.error "Git ls-remote error for #{url}: #{e.message}"
+      false
+    end
+  end
+  
+  def valid_git_url?(url)
+    # Basic validation to ensure it's a reasonable git URL
+    # Prevents command injection attempts
+    return false if url.blank?
+    return false if url.include?('`') || url.include?(';') || url.include?('|')
+    return false if url.include?('$(') || url.include?('&&')
+    
+    # Must be http/https or git protocol
+    url.match?(/\A(https?|git):\/\/[\w\-\.]+/)
   end
 end
