@@ -1,10 +1,178 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@font-face {
+  font-family: 'Daydream New';
+  font-display: swap;
+  src: url('/fonts/serif.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Daydream New';
+  font-display: swap;
+  src: url('/fonts/serif-italic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+}
+
+body {
+  background-image: url('https://daydream.hackclub.com/brushstroking.png'), url('https://daydream.hackclub.com/cloudy-bg-dim.png'), linear-gradient(to bottom, #CCF4FD, #AECDF6);
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-size: contain, cover, cover;
+  background-position: center center, center 20vh, center center;
+  background-blend-mode: overlay, normal, normal;
+
+  min-height: 100vh;
+  height: max-content;
+
+  font-family: "Atkinson Hyperlegible", sans-serif;
+  color: rgb(139, 69, 19);
+}
+
+.card {
+  background-color: #fef9dc;
+  border: 2px solid #D3B180;
+  padding: 0.5rem 2rem;
+}
+.card.big {
+  padding: 1rem 2rem;
+}
+.main {
+  max-width: 64rem;
+  width: max-content;
+  margin-inline: auto;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Daydream New', serif;
+  color: rgb(131, 55, 16);
+  text-align: center;
+}
+p {
+  font-size: 1.25rem;
+}
+
+.step {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+}
+.details {
+  opacity: 0.8;
+  margin-left: 3rem;
+  margin-top: -0.5rem;
+}
+
+hr {
+  color: rgba(131, 55, 16, 0.2);
+  margin-inline: 3rem;
+}
+
+.simple-link {
+  color: rgb(139, 69, 19);
+}
+.simple-link:hover {
+  filter: brightness(110%);
+}
+
+.shirt-right {
+  position: relative;
+  width: 100%;
+}
+.shirt-right::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(25%, -50%);
+  height: 150%;
+  aspect-ratio: 1;
+  background-image: url("/shirt.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.divider {
+  height: 1rem;
+}
+
+.email-caption {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.email-caption + p {
+  opacity: 0.5;
+  margin-top: -1rem;
+}
+
+.email-form {
+  border-radius: 9999px;
+  background-color: white;
+  border: 2px solid #4477A3;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 0 0 #4477A3;
+  transition: all 100ms ease;
+  margin-top: 2rem;
+  margin-bottom: -3rem;
+}
+
+.email-form:focus-within {
+  border-color: #E472AB;
+  box-shadow: 0 4px 0 0 #E472AB;
+}
+
+.email-form:has(button:active) {
+  border-color: #4477A3;
+  box-shadow: 0 4px 0 0 #4477A3;
+}
+
+.email-form:has(button:focus) {
+  border-color: #4477A3;
+  box-shadow: 0 4px 0 0 #4477A3;
+}
+
+.email-input {
+  width: 20rem;
+  padding: 0.75rem 0.75rem;
+  color: #4477A3;
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+}
+
+.submit-button {
+  background-color: #FCF7C4;
+  height: 100%;
+  padding: 0.45rem 1.25rem;
+  border-radius: 9999px;
+  border-bottom: 3px solid #B3866A;
+  cursor: pointer;
+  transition: all 100ms ease;
+  flex-shrink: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.submit-button:hover {
+  border-bottom: 6px solid #B3866A;
+}
+
+.submit-button:active {
+  border-bottom: 0;
+  transform: translateY(2px);
+}
+
+.submit-button:focus {
+  outline: none;
+}
