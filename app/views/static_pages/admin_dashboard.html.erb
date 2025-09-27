@@ -1,0 +1,84 @@
+<div class="main">
+    <div class="card big">
+        <h1>Events</h1>
+        <hr>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Organizers</th>
+                    <th>Voting Enabled</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @events.each do |event| %>
+                    <tr>
+                        <td><%= event.name %></td>
+                        <td>
+                            <% event.organizers.each do |organizer| %>
+                                <%= organizer.first_name %> <%= organizer.last_name %><% unless organizer == event.organizers.last %>, <% end %>
+                            <% end %>
+                        </td>
+                        <td><%= event.voting_enabled? ? "Yes" : "No" %></td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card big">
+        <h1>Users</h1>
+        <hr>
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Admin?</th>
+                    <th>Projects</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @users.each do |user| %>
+                    <tr>
+                        <td><%= user.email %></td>
+                        <td><%= user.profile_datum&.first_name %></td>
+                        <td><%= user.profile_datum&.last_name %></td>
+                        <td><%= user.is_admin? ? "Yes" : "No" %></td>
+                        <td><%= user.projects.count %></td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card big">
+        <h1>Projects</h1>
+        <hr>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Event</th>
+                    <th>Submitted?</th>
+                    <th>Team Members</th>
+                    <th>Votes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @projects.each do |project| %>
+                    <tr>
+                        <td><%= project.title %></td>
+                        <td><%= truncate(project.description, length: 50) %></td>
+                        <td><%= project.attending_event&.name || "N/A" %></td>
+                        <td><%= project.submitted? ? "Yes" : "No" %></td>
+                        <td><%= project.users.count %></td>
+                        <td><%= project.votes.count %></td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -2,10 +2,11 @@ Rails.application.routes.draw do
   get "projects/select_role"
   get "projects/wait_for_invite"
   get "projects/invite_members"
+  get "admin_dashboard", to: "static_pages#admin_dashboard"
   post "projects/invite_members", to: "projects#create_invite"
   get "events/:event/vote", to: "projects#vote", as: :event_vote
   post "events/:event/make_vote_selection", to: "projects#make_vote_selection", as: :event_make_vote_selection
-  
+
   scope :events do
     scope "/:event_slug" do
       get "organize", to: "organize#index", as: :organize_event
