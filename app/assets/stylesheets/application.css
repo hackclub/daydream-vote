@@ -127,6 +127,7 @@ hr {
 .shirt-image {
   flex-shrink: 0;
   width: 100px;
+  margin-inline: auto;
 }
 
 .shirt-image img {
@@ -305,7 +306,7 @@ hr {
   background-color: #E472AB;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 500px) {
   .progress-container {
     flex-direction: column;
     gap: 1rem;
