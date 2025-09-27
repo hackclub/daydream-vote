@@ -9,6 +9,20 @@ class User < ApplicationRecord
 
   before_validation :normalize_email
 
+  def last_unlocked_step
+    if profile_datum.nil?
+      :your_info
+    elsif projects.empty?
+      :your_project
+    elsif projects.any? { |p| p.draft? }
+      :review_and_submit
+    elsif projects.all? { |p| p.submitted? }
+      :vote
+    else
+      :your_info
+    end
+  end
+
   private
 
   def normalize_email
