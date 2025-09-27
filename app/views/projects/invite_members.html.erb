@@ -75,7 +75,7 @@
     <div
       class="submit-wrapper<%= ' disabled-pending' if has_pending_invites %>"
     >
-      <%= link_to "Continue", review_project_path, class: "submit-button-elem" %>
+      <%= link_to "Continue", review_project_path, class: "submit-button-elem #{"disabled" if @project.submitted?}" %>
       <img
         src="/button-clouds.svg" 
         alt="" 
