@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   end
   resource :profile, only: [ :edit, :update ]
   get "profile", to: redirect("/profile/edit")
+  get "project", to: redirect("/project/edit")
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
   resources :sessions, only: [ :create, :destroy ]
