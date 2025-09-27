@@ -9,8 +9,8 @@ class ProjectsController < ApplicationController
     @pending_invites = CreatorPositionInvite.where(email: current_user.email)
     @accepted_projects = current_user.projects.includes(:creator_positions)
 
-    if request.headers['Turbo-Frame'] == "invite_status"
-      render partial: "invite_status", layout: false, formats: [:html]
+    if request.headers["Turbo-Frame"] == "invite_status"
+      render partial: "invite_status", layout: false, formats: [ :html ]
     end
   end
 
@@ -112,7 +112,8 @@ class ProjectsController < ApplicationController
       redirect_to edit_project_path and return
     end
 
-    voted_projects = Project.where(id: params[:project_votes].keys)
+
+    voted_projects = Project.where(id: params[:project_votes].to_unsafe_h.filter_map { |k, v| v == "1" ? k : nil })
 
     if voted_projects.count > 3
       flash[:alert] = "You can only vote for up to 3 projects"
@@ -244,7 +245,7 @@ class ProjectsController < ApplicationController
 
   def invite_accepted
     @project = Project.find(params[:project_id])
-    
+
     # Verify current user is part of this project
     unless @project.users.include?(current_user)
       flash[:alert] = "You are not part of this project"
