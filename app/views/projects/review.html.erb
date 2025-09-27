@@ -72,7 +72,7 @@
         </div>
         
         <div class="submit-wrapper review-button">
-          <%= link_to "Submit to #{@project.attending_event.name.titleize}", submit_project_path, method: :post, class: "submit-button-elem" %>
+          <%= button_to "Submit to #{@project.attending_event.name.titleize}", submit_project_path, class: "submit-button-elem" %>
           <img src="/button-clouds.svg" alt="" class="submit-clouds">
         </div>
       </div>

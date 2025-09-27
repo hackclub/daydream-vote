@@ -255,7 +255,7 @@ class ProjectsController < ApplicationController
   def submit
     @project.mark_submitted!
     flash[:notice] = "Project submitted successfully"
-    redirect_to edit_project_path
+    redirect_to review_project_path
   end
 
   def update
