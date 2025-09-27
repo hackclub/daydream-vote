@@ -21,7 +21,7 @@
         fetch('<%= projects_wait_for_invite_path %>', {
           headers: {
             'Turbo-Frame': 'invite_status',
-            'Accept': 'text/vnd.turbo-stream.html'
+            'Accept': 'text/html'
           }
         })
         .then(response => response.text())

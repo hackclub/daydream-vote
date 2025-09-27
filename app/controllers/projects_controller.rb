@@ -10,7 +10,7 @@ class ProjectsController < ApplicationController
     @accepted_projects = current_user.projects.includes(:creator_positions)
 
     if request.headers['Turbo-Frame'] == "invite_status"
-      render partial: "invite_status", layout: false
+      render partial: "invite_status", layout: false, formats: [:html]
     end
   end
 
