@@ -5,14 +5,20 @@
 
     <h1>Vote!</h1>
 
-    <p><strong>Choose the top 3 projects to award prizes</strong></p>
+    <% unless @event.voting_enabled? %>
+      <div class="alert alert-info">
+        <p><strong>Voting is not turned on by the organizers yet</strong></p>
+        <p><%= @voting_disabled_message %></p>
+      </div>
+    <% else %>
+      <p><strong>Choose the top 3 projects to award prizes</strong></p>
 
-    <div class="voting-instructions">
-      <p>Vote for the projects you think deserve recognition. You can vote for up to 3 projects.</p>
-      <p><em>Note: You cannot vote for projects you've contributed to.</em></p>
-    </div>
+      <div class="voting-instructions">
+        <p>Vote for the projects you think deserve recognition. You can vote for up to 3 projects.</p>
+        <p><em>Note: You cannot vote for projects you've contributed to.</em></p>
+      </div>
 
-    <% if @projects.any? %>
+      <% if @projects.any? %>
       <%= form_for :project_votes, url: event_make_vote_selection_path(@event.name), method: :post, local: true, data: { turbo: false } do |form| %>
         <div class="projects-list">
           <% @projects.each do |project| %>
@@ -50,12 +56,13 @@
             <button type="submit" class="btn btn-primary">Submit Votes</button>
           </form>
         </div>
+        <% end %>
+      <% else %>
+        <div class="no-projects">
+          <p>No projects available for voting at this time.</p>
+          <p>Either no other participants have submitted projects yet, or you're the only participant at your event.</p>
+        </div>
       <% end %>
-    <% else %>
-      <div class="no-projects">
-        <p>No projects available for voting at this time.</p>
-        <p>Either no other participants have submitted projects yet, or you're the only participant at your event.</p>
-      </div>
     <% end %>
 
     <div class="actions">

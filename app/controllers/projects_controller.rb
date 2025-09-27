@@ -85,6 +85,12 @@ class ProjectsController < ApplicationController
                       .includes(:users, :creator_positions)
 
     @votes = current_user.votes.where(project: @projects)
+    @voting_disabled_message = [
+      "help voting open sooner by going around and helping others submit their project",
+      "no time to explain: honk really loudly to unlock voting",
+      "voting will unlock once the organizers decide it's time",
+      "voting will unlock soon, just hang tight!"
+    ].sample
   end
 
   def make_vote_selection
