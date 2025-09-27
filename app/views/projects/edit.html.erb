@@ -6,7 +6,7 @@
 
     <%= form_with model: @project, url: project_path, method: :patch, local: true, multipart: true, data: { turbo: false } do |form| %>
       <% if @project.errors.any? %>
-        <div class="error>
+        <div class="error">
           <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
           <ul>
             <% @project.errors.full_messages.each do |message| %>
