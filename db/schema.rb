@@ -10,7 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_27_050201) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_27_060008) do
+  create_table "creator_position_invites", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.string "email"
+    t.string "token"
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "invited_by_id", null: false
+    t.index ["invited_by_id"], name: "index_creator_position_invites_on_invited_by_id"
+    t.index ["project_id"], name: "index_creator_position_invites_on_project_id"
+  end
+
+  create_table "creator_positions", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "role", default: 1, null: false
+    t.index ["project_id"], name: "index_creator_positions_on_project_id"
+    t.index ["role"], name: "index_creator_positions_on_role"
+    t.index ["user_id"], name: "index_creator_positions_on_user_id"
+  end
+
+  create_table "prechecks", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "status"
+    t.text "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_prechecks_on_project_id"
+  end
+
   create_table "profile_data", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "first_name"
@@ -35,8 +67,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_050201) do
     t.string "repo_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
   create_table "tokens", id: :string, force: :cascade do |t|
@@ -56,7 +86,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_050201) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "creator_position_invites", "projects"
+  add_foreign_key "creator_position_invites", "users", column: "invited_by_id"
+  add_foreign_key "creator_positions", "projects"
+  add_foreign_key "creator_positions", "users"
+  add_foreign_key "prechecks", "projects"
   add_foreign_key "profile_data", "users"
-  add_foreign_key "projects", "users"
   add_foreign_key "tokens", "users"
 end

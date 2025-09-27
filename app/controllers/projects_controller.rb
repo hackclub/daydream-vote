@@ -9,11 +9,26 @@ class ProjectsController < ApplicationController
   end
   
   def update
-    if @project.update(project_params)
-      flash[:notice] = "Project updated successfully"
-      redirect_to edit_project_path
+    # If it's a new project, we need to save it and create the creator position
+    if @project.new_record?
+      @project.assign_attributes(project_params)
+      if @project.save
+        # Create the creator position as owner to associate user with project
+        @project.creator_positions.create!(user: current_user, role: :owner)
+        flash[:notice] = "Project created successfully"
+        redirect_to edit_project_path
+      else
+        flash.now[:alert] = "Please fix the errors below"
+        render :edit
+      end
     else
-      render :edit
+      if @project.update(project_params)
+        flash[:notice] = "Project updated successfully"
+        redirect_to edit_project_path
+      else
+        flash.now[:alert] = "Please fix the errors below"
+        render :edit
+      end
     end
   end
   
@@ -27,7 +42,13 @@ class ProjectsController < ApplicationController
   end
   
   def set_project
-    @project = current_user.projects.first || current_user.projects.build
+    @project = current_user.projects.first || build_new_project_for_user
+  end
+  
+  def build_new_project_for_user
+    project = Project.new
+    # Don't save yet - just build it for the form
+    project
   end
   
   def project_params

@@ -21,6 +21,9 @@ gem "jbuilder"
 gem "papertrail"
 gem "acts_as_paranoid"
 
+# for web scraping
+gem "httparty"
+
 # for previewing letters
 group :development do
   gem "letter_opener"

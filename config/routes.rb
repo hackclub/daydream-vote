@@ -4,8 +4,8 @@ Rails.application.routes.draw do
   resource :profile, only: [:edit, :update]
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   
-  get "static_pages/landing"
-  resources :sessions, only: [:new, :create, :destroy]
+  resources :sessions, only: [:create, :destroy]
+  get "sessions/new", to: "static_pages#landing", as: :new_session
   get "verify_token/:token_id", to: "sessions#verify_token", as: :verify_token
   
   root "static_pages#landing"

@@ -1,6 +1,5 @@
 class SessionsController < ApplicationController
-  def new
-  end
+
 
   def create
     email = params[:email]&.downcase&.strip
@@ -20,7 +19,7 @@ class SessionsController < ApplicationController
     else
       "We sent you a login link"
     end
-    redirect_to new_session_path
+    redirect_to root_path
   end
 
   def destroy
@@ -38,12 +37,11 @@ class SessionsController < ApplicationController
       
       # Check if profile data exists
       if token.user.profile_datum.nil?
-        session[:first_profile_completion] = true
         flash[:notice] = "Successfully signed in! Please complete your profile information."
         redirect_to edit_profile_path
       else
         flash[:notice] = "Successfully signed in!"
-        redirect_to root_path
+        redirect_to projects_select_role_path
       end
     else
       flash[:alert] = "Invalid or expired login link"

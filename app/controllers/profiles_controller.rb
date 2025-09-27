@@ -8,13 +8,7 @@ class ProfilesController < ApplicationController
   def update
     if @profile_datum.update(profile_datum_params)
       flash[:notice] = "Profile updated successfully"
-      # Check if this is first time completing profile
-      if session[:first_profile_completion]
-        session.delete(:first_profile_completion)
-        redirect_to projects_select_role_path
-      else
-        redirect_to edit_profile_path
-      end
+      redirect_to projects_select_role_path
     else
       flash.now[:alert] = "Please fix the errors below"
       render :edit
@@ -34,10 +28,8 @@ class ProfilesController < ApplicationController
     @profile_datum = current_user.profile_datum
     
     if @profile_datum.nil?
-      # Build new profile with Airtable data if available (only for first-time users)
-      airtable_data = session[:first_profile_completion] ? 
-                       ::AirtableService.find_profile_by_email(current_user.email) || {} : 
-                       {}
+      # Build new profile with Airtable data if available
+      airtable_data = ::AirtableService.find_profile_by_email(current_user.email) || {}
       @profile_datum = current_user.build_profile_datum(airtable_data)
     end
   end
