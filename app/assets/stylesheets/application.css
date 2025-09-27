@@ -266,10 +266,20 @@ hr {
   text-align: center;
   max-width: 120px;
   width: max-content;
+  padding: 0.1rem 0.5rem;
 }
 
 .progress-step:not(.active) .step-label {
   color: #D3B180;
+}
+
+.progress-step.current .step-label {
+  color: #ffffff!important;
+  filter: brightness(1)!important;
+  background: #E472AB;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
 }
 
 .progress-line {
