@@ -1,11 +1,9 @@
-<%= turbo_frame_tag "auth_nav", style: "font-size: 12px;" do %>
+<%= turbo_frame_tag "auth-nav" do %>
   <% if signed_in? %>
     Hi, <%= current_user.email %>
-    <div style="display: flex; flex-direction: row; gap: 1rem;">
-      <%= link_to "Edit profile", edit_profile_path, data: { turbo_frame: "_top" } %>
-      <%= button_to "Sign Out", session_path(current_user), method: :delete, data: { turbo_frame: "_top" } %>
-    </div>
-  <% else %>
-    <%= link_to "Sign In", new_session_path, data: { turbo_frame: "_top" } %>
+    <div class="divider"></div>
+    <%= link_to "Edit profile", edit_profile_path, data: { turbo_frame: "_top" } %>
+    <div class="divider"></div>
+    <%= button_to "Sign Out", session_path(current_user), method: :delete, data: { turbo_frame: "_top" } %>
   <% end %>
 <% end %>

@@ -398,19 +398,39 @@ html, body {
   margin: 0px;
 }
 
-#auth_nav {
-  width: 100%;
-  background-color: #E472AB;
-  color: white;
-  padding: 0.25rem;
-  margin: 0rem;
+#auth-nav {
+  color: #4477a3;
+  margin-top: 1rem;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  justify-content: right;
+  height: 1.25rem;
+  width: calc(100% - 1.5rem);
   position: static;
-  top: 0;
-  left: 0;
   z-index: 1000;
+  font-size: 1rem;
+  opacity: 0.7;
+  transition: 0.1s;
 }
-
+#auth-nav:hover {
+  opacity: 1;
+}
+#auth-nav .divider {
+  height: 100%;
+  width: 1px;
+  background-color: #4477a350;
+  margin-inline: 1rem;
+}
+#auth-nav button, #auth-nav a {
+  background: transparent;
+  border: none;
+  outline: none;
+  text-decoration: underline;
+  margin: 0;
+  padding: 0;
+  font-family: "Atkinson Hyperlegible", sans-serif;
+  font-size: 1rem;
+  color: #4477a3;
+  cursor: pointer;
+}
