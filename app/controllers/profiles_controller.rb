@@ -8,8 +8,9 @@ class ProfilesController < ApplicationController
   def update
     if @profile_datum.update(profile_datum_params)
       flash[:notice] = "Profile updated successfully"
-      if @profile_datum.user.projects.first.present?
-        redirect_to edit_project_path
+      latest_project = @profile_datum.user.projects.order(created_at: :desc).first
+      if latest_project.present?
+        redirect_to invite_accepted_path(latest_project.id)
       else
         redirect_to projects_select_role_path
       end
