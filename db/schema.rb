@@ -73,7 +73,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_180122) do
   create_table "organizer_positions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "event_id", null: false
-    t.integer "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_organizer_positions_on_event_id"
