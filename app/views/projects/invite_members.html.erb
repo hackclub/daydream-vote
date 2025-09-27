@@ -2,110 +2,84 @@
 
 <div class="main">
   <div class="card big">
-    <h1>Invite Team Members</h1>
-
-    <div class="project-summary">
-      <h2><%= @project.title %></h2>
-      <p><%= @project.description %></p>
-      
-      <div class="project-links">
-        <p><strong>Itch.io:</strong> <%= link_to @project.itchio_url, @project.itchio_url, target: "_blank" %></p>
-        <p><strong>Repository:</strong> <%= link_to @project.repo_url, @project.repo_url, target: "_blank" %></p>
-      </div>
-    </div>
-
-    <div class="invite-section">
-      <h3>Invite Team Members</h3>
-      <p>Add your team members by email. They'll receive an invitation to join your project.</p>
-      
-      <!-- Form for inviting team members will go here -->
-      <div class="invite-form">
-        <form action="<%= projects_invite_members_path %>" method="post" data-turbo="false">
-          <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-          <div>
-            <label for="email">Team Member Email:</label>
-            <input type="email" id="email" name="email" required>
-          </div>
-          <div>
-            <button type="submit">Send Invite</button>
-          </div>
-        </form>
-      </div>
+    <h1 class="invite-title-top">Invite Team Members for</h1>
+    <div class="card light">
+      <h1 class="invite-title-bottom"><%= @project.title %></h1>
     </div>
 
     <div class="team-members-list">
       <h3>Team Members</h3>
       
-      <div class="members-table">
-        <!-- Current user (owner) -->
-        <div class="member-row owner">
-          <div class="member-email"><%= current_user.email %></div>
-          <div class="member-status accepted">Accepted</div>
-          <div class="member-role">Owner</div>
-          <div class="member-actions">-</div>
-        </div>
-        
-        <!-- Accepted team members -->
-        <% @project.users.where.not(id: current_user.id).each do |user| %>
-          <div class="member-row accepted">
-            <div class="member-email"><%= user.email %></div>
-            <div class="member-status accepted">Accepted</div>
-            <div class="member-role">
-              <%= user.creator_positions.find_by(project: @project).role.humanize %>
-            </div>
-            <div class="member-actions">Can't revoke</div>
-          </div>
-        <% end %>
-        
-        <!-- Pending invites -->
-        <% @project.creator_position_invites.each do |invite| %>
-          <div class="member-row pending">
-            <div class="member-email"><%= invite.email %></div>
-            <div class="member-status pending">
-              <% if invite.expired? %>
-                <span class="expired">Expired</span>
-              <% else %>
-                <span class="pending">Pending</span>
-                <small>(expires <%= invite.expires_at.strftime("%m/%d at %I:%M %p") %>)</small>
+      <div class="members-grid">
+        <% 
+          # Collect all members and invites
+          owner = [{ type: 'owner', email: current_user.email, role: 'Owner' }]
+          accepted_members = @project.users.where.not(id: current_user.id).map do |user|
+            { type: 'accepted', email: user.email, role: user.creator_positions.find_by(project: @project).role.humanize }
+          end
+          pending_invites = @project.creator_position_invites.map do |invite|
+            { 
+              type: 'pending', 
+              email: invite.email, 
+              role: invite.expired? ? 'Collaborator (expired)' : 'Collaborator (<u>Invite Pending</u>)'.html_safe,
+              invite: invite
+            }
+          end
+          
+          all_members = owner + accepted_members + pending_invites
+          
+          # Always show 3 slots
+          3.times do |i|
+            member = all_members[i]
+        %>
+          <div class="card light member-card">
+            <% if member %>
+              <div class="member-info">
+                <div class="member-email"><strong><%= member[:email] %></strong></div>
+                <div class="member-role"><%= member[:role] %></div>
+              </div>
+              <% if member[:type] == 'pending' %>
+                <div class="member-actions">
+                  <%= form_with url: delete_project_invite_path(member[:invite]), method: :delete, 
+                      local: true, data: { turbo: false }, style: "display: inline;" do |form| %>
+                    <%= form.submit "×", class: "revoke-btn",
+                        onclick: "return confirm('Are you sure you want to revoke this invite?')" %>
+                  <% end %>
+                </div>
               <% end %>
-            </div>
-            <div class="member-role">Collaborator</div>
-            <div class="member-actions">
-              <%= form_with url: delete_project_invite_path(invite), method: :delete, 
-                  local: true, data: { turbo: false }, style: "display: inline;" do |form| %>
-                <%= form.submit "Revoke Invite", class: "revoke-invite-btn",
-                    onclick: "return confirm('Are you sure you want to revoke this invite?')" %>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-        
-        <% if @project.users.count == 1 && @project.creator_position_invites.empty? %>
-          <div class="member-row empty">
-            <div class="member-email">No team members invited yet</div>
-            <div class="member-status">-</div>
-            <div class="member-role">-</div>
-            <div class="member-actions">-</div>
+            <% else %>
+              <div class="inline-invite-form">
+                <%= form_with url: projects_invite_members_path, method: :post, 
+                    local: true, data: { turbo: false }, class: "inline-invite" do |form| %>
+                  <%= form.email_field :email, 
+                      placeholder: "Email of team member ##{i + 1}", 
+                      required: true, 
+                      class: "inline-email-input" %>
+                  <%= form.submit "Invite", class: "inline-invite-btn" %>
+                <% end %>
+              </div>
+            <% end %>
           </div>
         <% end %>
       </div>
+
+      <% has_pending_invites = @project.has_pending_invites? %>
+      <% if has_pending_invites %>
+        <p class="pending-notice">
+          <strong>Note:</strong> You must wait for all pending invites to be accepted before continuing.
+        </p>
+      <% end %>
     </div>
 
-    <% has_pending_invites = @project.has_pending_invites? %>
-
-    <div class="actions">
-      <%= link_to "Edit Project", edit_project_path, class: "btn" %>
-      
-      <% if has_pending_invites %>
-        <button class="btn btn-primary" disabled>
-          Continue (resolve pending invites first)
-        </button>
-        <p class="pending-notice">
-          <strong>Note:</strong> You must wait for all pending invites to be accepted or expired before continuing.
-        </p>
-      <% else %>
-        <%= link_to "Continue", review_project_path, class: "btn btn-primary" %>
-      <% end %>
+    <div
+      class="submit-wrapper<%= ' disabled-pending' if has_pending_invites %>"
+    >
+      <%= link_to "Continue", review_project_path, class: "submit-button-elem" %>
+      <img
+        src="/button-clouds.svg" 
+        alt="" 
+        class="submit-clouds"
+      >
     </div>
   </div>
 </div>
