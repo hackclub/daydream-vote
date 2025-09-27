@@ -177,6 +177,17 @@ hr {
   box-shadow: 0 4px 0 0 #4477A3;
 }
 
+.email-form-success {
+  background-color: #4477A3 !important;
+  color: white !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 1rem;
+}
+
 .email-input {
   width: 20rem;
   padding: 0.75rem 0.75rem;

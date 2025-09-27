@@ -19,14 +19,20 @@
         <div class="divider"></div>
         
         <% unless signed_in? %>
-            <p class="email-caption">Enter your email to start:</p>
-            <p>(This will send you a magic link; please use the same email you used for the rest of Daydream)</p>
-        
-            <%= form_with url: sessions_path, method: :post, local: true, class: "email-form" do |form| %>
-                <%= form.email_field :email, placeholder: "fiona.hacksworth@hackclub.com", class: "email-input", required: true %>
-                <button type="submit" class="submit-button">
-                    <img src="submit.svg" alt="Go">
-                </button>
+            <% if flash[:notice] %>
+                <div class="email-form email-form-success">
+                    Email sent
+                </div>
+            <% else %>
+                <p class="email-caption">Enter your email to start:</p>
+                <p>(This will send you a magic link; please use the same email you used for the rest of Daydream)</p>
+            
+                <%= form_with url: sessions_path, method: :post, local: true, class: "email-form" do |form| %>
+                    <%= form.email_field :email, placeholder: "fiona.hacksworth@hackclub.com", class: "email-input", required: true %>
+                    <button type="submit" class="submit-button">
+                        <img src="submit.svg" alt="Go">
+                    </button>
+                <% end %>
             <% end %>
         <% end %>
 
