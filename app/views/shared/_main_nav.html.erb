@@ -1,7 +1,28 @@
-<nav class="main-nav">
+<nav class="progress-nav">
   <% if signed_in? %>
-    <%= link_to "select your daydream", edit_profile_path %>
-    <%= link_to "add your project", edit_project_path %>
-    <span>get your t-shirt</span>
+    <div class="progress-container">
+      <div class="progress-step active">
+        <div class="step-circle"></div>
+        <div class="step-label">Select Your Daydream</div>
+      </div>
+      <div class="progress-line active"></div>
+      
+      <div class="progress-step active">
+        <div class="step-circle"></div>
+        <div class="step-label">Add Your Project</div>
+      </div>
+      <div class="progress-line active"></div>
+      
+      <div class="progress-step active">
+        <div class="step-circle"></div>
+        <div class="step-label">Get Your T-Shirt</div>
+      </div>
+      <div class="progress-line"></div>
+      
+      <div class="progress-step">
+        <div class="step-circle"></div>
+        <div class="step-label">Vote For Your Favorite Projects</div>
+      </div>
+    </div>
   <% end %>
 </nav>
