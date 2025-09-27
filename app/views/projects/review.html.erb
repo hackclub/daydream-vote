@@ -16,6 +16,8 @@
         </div>
       <% end %>
 
+      <%= image_tag @project.image.variant(resize_to_limit: [400, 400]) if @project.image.attached? %>
+
       <h3>Title</h3>
       <p><%= @project.title %></p>
 

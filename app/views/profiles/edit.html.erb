@@ -18,16 +18,6 @@
       <% end %>
 
       <div class="standard-form"> 
-          <div class="wide">
-            <%= form.label :attending_event, "Which Daydream Event are you attending?" %>
-            <%= form.select :attending_event, 
-                options_for_select(
-                  ProfileDatum.attending_events.keys, 
-                  @profile_datum.attending_event
-                ), 
-                { prompt: "Select an event..." }, { disabled:  @profile_datum.attending_event.present? } %>
-          </div>
-
         <hr class="wide">
 
         <div>
@@ -85,7 +75,7 @@
         <div class="wide">
           <div class="checkbox-option">
             <%= form.check_box :honesty_policy_agreement, {}, "true", "false" %>
-            <%= label_tag "profile_datum_honesty_policy_agreement", "I'm currently at Daydream XXX and I agree to Hack Club's honesty policy" %>
+            <%= label_tag "profile_datum_honesty_policy_agreement", "I'm currently at Daydream and I agree to Hack Club's honesty policy" %>
           </div>
         </div>
 

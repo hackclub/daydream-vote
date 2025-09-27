@@ -42,7 +42,6 @@ class ProfilesController < ApplicationController
     allowed_params = [ :first_name, :last_name, :dob, :address_line_1,
                                          :address_line_2, :address_city, :address_state,
                                          :address_zip_code, :address_country ]
-    allowed_params << :attending_event unless @profile_datum.present? && @profile_datum.attending_event.present?
     params.require(:profile_datum).permit(allowed_params)
   end
 end

@@ -44,6 +44,9 @@ class ProjectsController < ApplicationController
       invited_by: current_user
     )
 
+    # Send the invite email
+    LoopsMailer.invite_email(invite).deliver_now
+
     flash[:notice] = "Invite sent successfully to #{email}"
     redirect_to projects_invite_members_path
   rescue ActiveRecord::RecordInvalid => e
@@ -52,21 +55,15 @@ class ProjectsController < ApplicationController
   end
 
   def vote
-    # Get projects from users at the same event, excluding current user's projects
-    current_user_event = current_user.profile_datum&.attending_event
-    redirect_to edit_profile_path and return unless current_user_event
+    # Get the user's current project to determine which event to show projects for
+    current_user_project = current_user.projects.first
+    redirect_to edit_project_path and return unless current_user_project&.attending_event
 
-    # Find all users at the same event
-    users_at_event = User.joins(:profile_datum)
-                         .where(profile_data: { attending_event: current_user_event })
+    current_user_event = current_user_project.attending_event
 
-    # Get projects from those users, excluding ones current user is involved in
-    @projects = Project.joins(:creator_positions)
-                      .joins("JOIN users ON creator_positions.user_id = users.id")
-                      .joins("JOIN profile_data ON users.id = profile_data.user_id")
-                      .where(profile_data: { attending_event: current_user_event })
+    # Get projects from the same event, excluding current user's projects
+    @projects = Project.where(attending_event: current_user_event)
                       .where.not(id: current_user.projects.pluck(:id))
-                      .distinct
                       .includes(:users, :creator_positions)
   end
 
@@ -89,6 +86,34 @@ class ProjectsController < ApplicationController
   rescue ActiveRecord::RecordNotFound
     flash[:alert] = "Invite not found"
     redirect_to projects_invite_members_path
+  end
+
+  def accept_invite
+    invite = CreatorPositionInvite.find_by(token: params[:token])
+    
+    unless invite
+      flash[:alert] = "Invite not found or expired"
+      redirect_to root_path and return
+    end
+
+    if invite.expired?
+      flash[:alert] = "This invite has expired"
+      redirect_to root_path and return
+    end
+
+    # Check if user is already part of this project
+    if invite.project.users.include?(current_user)
+      flash[:notice] = "You are already part of this project"
+      redirect_to edit_project_path and return
+    end
+
+    if invite.accept!(current_user)
+      flash[:notice] = "Successfully joined #{invite.project.title}!"
+      redirect_to edit_project_path
+    else
+      flash[:alert] = "Failed to accept invite"
+      redirect_to root_path
+    end
   end
 
   def edit
@@ -156,6 +181,6 @@ class ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:title, :description, :itchio_url, :repo_url, :image)
+    params.require(:project).permit(:title, :description, :itchio_url, :repo_url, :image, :attending_event)
   end
 end

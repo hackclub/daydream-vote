@@ -1,0 +1,7 @@
+<p>You've been invited by <%= @inviter.email %> to join the project <strong><%= @project.title %></strong> for Daydream.</p>
+
+<p>Click the link below to accept the invitation:</p>
+
+<p><%= link_to "Accept Invitation", @accept_url %></p>
+
+<p>This invitation will expire on <%= @invite.expires_at.strftime("%B %d, %Y at %I:%M %p") %>.</p>

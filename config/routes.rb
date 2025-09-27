@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   post "projects/invite_members", to: "projects#create_invite"
   get "projects/vote"
   delete "projects/invites/:invite_id", to: "projects#delete_invite", as: :delete_project_invite
+  get "accept_invite/:token", to: "projects#accept_invite", as: :accept_invite
   resource :project, only: [ :edit, :update ] do
     get "review"
     post "submit", to: "projects#submit", as: :submit

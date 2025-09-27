@@ -20,4 +20,16 @@ class LoopsMailer < ApplicationMailer
       to: @email,
     )
   end
+
+  def invite_email(invite)
+    @invite = invite
+    @project = invite.project
+    @inviter = invite.invited_by
+    @accept_url = accept_invite_url(token: invite.token)
+
+    mail(
+      to: @invite.email,
+      subject: "You've been invited to join #{@project.title}"
+    )
+  end
 end
