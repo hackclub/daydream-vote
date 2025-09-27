@@ -168,4 +168,52 @@ else
   puts "No events found in Airtable or API key not configured"
 end
 
+# Fetch Confirmed Events from Airtable and match by email
+puts "Fetching confirmed events from Airtable to populate confirmed_event_airtable_id..."
+confirmed_events = AirtableService.fetch_confirmed_events_from_airtable
+confirmed_events_lookup = {}
+
+confirmed_events.each do |confirmed_event_data|
+  puts "  Confirmed Event: airtable_id: '#{confirmed_event_data[:airtable_id]}' -> email: #{confirmed_event_data[:email].inspect} -> event_name: #{confirmed_event_data[:event_name].inspect}"
+  
+  next unless confirmed_event_data[:email].present? && confirmed_event_data[:airtable_id].present?
+  
+  # Create lookup by email
+  confirmed_events_lookup[confirmed_event_data[:email].downcase] = {
+    airtable_id: confirmed_event_data[:airtable_id],
+    event_name: confirmed_event_data[:event_name]
+  }
+end
+
+puts "Processed #{confirmed_events.length} confirmed events, added #{confirmed_events_lookup.length} to lookup"
+
+if confirmed_events_lookup.any?
+  puts "Found #{confirmed_events_lookup.length} confirmed events in Airtable with valid data"
+  
+  # Update existing events with confirmed_event_airtable_id and humanized_name by matching owner_email
+  confirmed_updated_count = 0
+  Event.where.not(owner_email: nil).each do |event|
+    event_email = event.owner_email.downcase
+    if confirmed_events_lookup.key?(event_email)
+      confirmed_data = confirmed_events_lookup[event_email]
+      update_attrs = { confirmed_event_airtable_id: confirmed_data[:airtable_id] }
+      
+      # Set humanized_name if available
+      if confirmed_data[:event_name].present?
+        update_attrs[:humanized_name] = confirmed_data[:event_name]
+      end
+      
+      event.update!(update_attrs)
+      puts "  ✓ Updated #{event.name} with confirmed_event_airtable_id: #{event.confirmed_event_airtable_id} and humanized_name: #{event.humanized_name.inspect}"
+      confirmed_updated_count += 1
+    else
+      puts "  ✗ #{event.name} (#{event.owner_email}) - no matching confirmed event"
+    end
+  end
+  
+  puts "Updated #{confirmed_updated_count} events with confirmed_event_airtable_id information"
+else
+  puts "No confirmed events found in Airtable or API key not configured"
+end
+
 puts "Finished seeding events!"

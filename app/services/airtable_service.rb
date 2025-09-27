@@ -4,6 +4,8 @@ require 'json'
 class AirtableService
   BASE_ID = "appmCFCuFmxkvO1zc"
   PROFILE_TABLE_ID = "tblwoiggOeX0s6nyG"
+  CONFIRMED_EVENTS_BASE_ID = "appRHzPloxM3u4hUA"
+  CONFIRMED_EVENTS_TABLE_ID = "tbl4a18NRx3I4qGPu"
   
   def self.find_profile_by_email(email)
     return nil unless ENV["AIRTABLE_API_KEY"].present?
@@ -18,6 +20,14 @@ class AirtableService
     
     Rails.cache.fetch("airtable_events", expires_in: 1.hour) do
       fetch_all_events
+    end
+  end
+  
+  def self.fetch_confirmed_events_from_airtable
+    return [] unless ENV["AIRTABLE_API_KEY"].present?
+    
+    Rails.cache.fetch("airtable_confirmed_events", expires_in: 1.hour) do
+      fetch_all_confirmed_events
     end
   end
   
@@ -68,6 +78,56 @@ class AirtableService
     all_records
   rescue => e
     Rails.logger.error "Airtable events fetch error: #{e.message}"
+    []
+  end
+  
+  def self.fetch_all_confirmed_events
+    all_records = []
+    offset = nil
+    
+    loop do
+      url = "https://api.airtable.com/v0/#{CONFIRMED_EVENTS_BASE_ID}/#{CONFIRMED_EVENTS_TABLE_ID}"
+      uri = URI(url)
+      
+      # Add offset parameter if we have one
+      if offset
+        uri.query = URI.encode_www_form({ offset: offset })
+      end
+      
+      response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+        request = Net::HTTP::Get.new(uri)
+        request["Authorization"] = "Bearer #{ENV['AIRTABLE_API_KEY']}"
+        http.request(request)
+      end
+      
+      if response.code == "200"
+        data = JSON.parse(response.body)
+        records = data["records"]
+        
+        # Add records to our collection
+        page_records = records.map do |record|
+          fields = record["fields"]
+          {
+            airtable_id: record["id"],
+            email: fields["email"],
+            event_name: fields["event_name"]
+          }
+        end
+        
+        all_records.concat(page_records)
+        
+        # Check if there are more pages
+        offset = data["offset"]
+        break unless offset
+      else
+        Rails.logger.error "Airtable Confirmed Events API error: #{response.code} - #{response.body}"
+        break
+      end
+    end
+    
+    all_records
+  rescue => e
+    Rails.logger.error "Airtable confirmed events fetch error: #{e.message}"
     []
   end
   
