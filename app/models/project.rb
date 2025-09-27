@@ -1,11 +1,13 @@
 class Project < ApplicationRecord
   has_many :creator_positions, dependent: :destroy
   has_many :users, through: :creator_positions
+  has_many :votes, dependent: :destroy
+  has_many :voters, through: :votes, source: :user
   has_one :precheck, dependent: :destroy
   has_many :creator_position_invites, dependent: :destroy
   has_one_attached :image
 
-  belongs_to :attending_event, class_name: 'Event'
+  belongs_to :attending_event, class_name: "Event"
 
   validates :title, presence: true
   validates :description, presence: true
@@ -65,9 +67,9 @@ class Project < ApplicationRecord
   def image_is_valid_type
     return unless image.attached?
 
-    allowed_types = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp']
+    allowed_types = [ "image/png", "image/jpg", "image/jpeg", "image/gif", "image/webp" ]
     unless allowed_types.include?(image.content_type)
-      errors.add(:image, 'must be an image file (PNG, JPG, JPEG, GIF, or WebP)')
+      errors.add(:image, "must be an image file (PNG, JPG, JPEG, GIF, or WebP)")
     end
   end
 

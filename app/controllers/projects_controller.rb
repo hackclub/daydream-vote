@@ -111,7 +111,16 @@ class ProjectsController < ApplicationController
       redirect_to event_vote_path(@event.name) and return
     end
 
-    render plain: voted_projects.inspect
+    Vote.transaction do
+      # remove existing votes
+      current_user.votes.where(event: @event).destroy_all
+      # create new votes
+      voted_projects.each do |project|
+        current_user.votes.create!(project: project)
+      end
+    end
+
+    redirect_back_or_to event_vote_path(@event.name), notice: "Your votes have been recorded"
   end
 
   def delete_invite
