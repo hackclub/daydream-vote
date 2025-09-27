@@ -35,7 +35,7 @@
       <div class="progress-line <%= "active" if current_stage_index >= 4 %>"></div>
 
       <% if current_user.projects.first&.attending_event && current_user.projects.first&.submitted? %>
-        <%= link_to event_vote_path(current_user.projects.first.attending_event.name), class: "progress-step #{"active" if current_stage_index >= 4}" do %>
+        <%= link_to event_vote_path(current_user.projects.first.attending_event.name), class: "progress-step #{'active' if current_stage_index >= 4}" do %>
           <div class="step-circle"></div>
           <div class="step-label">Vote & Get <span style="white-space: nowrap">T-Shirt</span></div>
         <% end %>
