@@ -1007,3 +1007,29 @@ html, body {
   border-bottom: transparent;
   box-shadow: none;
 }
+
+.decline-button {
+  transform: translateY(-0.1px);
+}
+
+.decline-button:hover {
+  box-shadow: 0 2px 0 0 #4b5563;
+  transform: translateY(-2px);
+}
+
+.decline-button:active {
+  transform: translateY(0.125rem);
+  border-bottom: transparent;
+  box-shadow: none;
+}
+
+.accept-options {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+.accept-options input {
+  font-family: "Atkinson Hyperlegible" !important;
+  font-size: 1.25rem !important;
+}
