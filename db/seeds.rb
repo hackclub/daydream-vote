@@ -217,3 +217,250 @@ else
 end
 
 puts "Finished seeding events!"
+
+# Load all projects from Airtable
+puts "\nFetching projects from Airtable..."
+airtable_projects = AirtableService.fetch_all_projects_from_airtable
+
+if airtable_projects.empty?
+  puts "No projects found in Airtable or API key not configured"
+else
+  puts "Found #{airtable_projects.length} projects in Airtable"
+  
+  # Create a lookup for events by organizer email
+  event_by_organizer_email = {}
+  Event.where.not(owner_email: nil).each do |event|
+    event_by_organizer_email[event.owner_email.downcase] = event
+  end
+  
+  created_projects_count = 0
+  updated_projects_count = 0
+  created_users_count = 0
+  
+  airtable_projects.each_with_index do |project_data, index|
+    puts "\nProcessing project #{index + 1}/#{airtable_projects.length}: #{project_data[:title]}"
+    
+    # Skip if missing required data
+    unless project_data[:title].present? && project_data[:email].present?
+      puts "  ✗ Skipping - missing title or email"
+      next
+    end
+    
+    # Find or create the primary user
+    primary_user = User.find_or_create_by!(email: project_data[:email].downcase) do |user|
+      puts "  ✓ Creating user: #{project_data[:email]}"
+      created_users_count += 1
+    end
+    
+    # Find the associated event by organizer email
+    associated_event = nil
+    if project_data[:event__organizer_email].present?
+      organizer_emails = project_data[:event__organizer_email]
+      organizer_emails.each do |organizer_email|
+        if event_by_organizer_email.key?(organizer_email.downcase)
+          associated_event = event_by_organizer_email[organizer_email.downcase]
+          puts "  ✓ Found event: #{associated_event.name} (organizer: #{organizer_email})"
+          break
+        end
+      end
+    end
+    
+    unless associated_event
+      puts "  ✗ No matching event found for organizer emails: #{project_data[:event__organizer_email]}"
+      next
+    end
+    
+    # Find or create the project
+    existing_project = nil
+    
+    # First try to find by airtable_record_id if we have one
+    if project_data[:airtable_record_id].present?
+      existing_project = Project.find_by(airtable_record_id: project_data[:airtable_record_id])
+    end
+    
+    # If not found, try to find by project owner, event, and title
+    unless existing_project
+      existing_project = Project.joins(:creator_positions, :users)
+                               .where(creator_positions: { role: 'owner' })
+                               .where(users: { id: primary_user.id })
+                               .where(attending_event: associated_event)
+                               .where(title: project_data[:title])
+                               .first
+    end
+    
+    project_attributes = {
+      title: project_data[:title],
+      description: project_data[:readme] || "",
+      repo_url: project_data[:code_url] || "",
+      itchio_url: project_data[:gameplay_url] || "",
+      attending_event: associated_event,
+      aasm_state: 'submitted',
+      submitted_at: Time.current,
+      airtable_record_id: project_data[:airtable_record_id],
+      last_synced_to_airtable_at: Time.current
+    }
+    
+    if existing_project
+      existing_project.assign_attributes(project_attributes)
+      existing_project.skip_url_validations = true
+      existing_project.save!
+      puts "  ✓ Updated existing project: #{existing_project.title}"
+      updated_projects_count += 1
+      current_project = existing_project
+    else
+      current_project = Project.new(project_attributes)
+      current_project.skip_url_validations = true
+      current_project.save!
+      puts "  ✓ Created new project: #{current_project.title}"
+      created_projects_count += 1
+      
+      # Create owner creator position
+      CreatorPosition.create!(
+        project: current_project,
+        user: primary_user,
+        role: 'owner'
+      )
+    end
+    
+
+    
+    # Handle additional teammates
+    [project_data[:additional_teammate_1], project_data[:additional_teammate_2]].compact.each do |teammate_email|
+      next unless teammate_email.present?
+      
+      teammate_user = User.find_or_create_by!(email: teammate_email.downcase) do |user|
+        puts "    ✓ Creating teammate user: #{teammate_email}"
+        created_users_count += 1
+      end
+      
+      # Create collaborator position if not exists
+      unless current_project.creator_positions.joins(:user).where(users: { id: teammate_user.id }).exists?
+        CreatorPosition.create!(
+          project: current_project,
+          user: teammate_user,
+          role: 'collaborator'
+        )
+        puts "    ✓ Added teammate as collaborator: #{teammate_email}"
+      else
+        puts "    ✓ Teammate already exists: #{teammate_email}"
+      end
+    end
+  end
+  
+  puts "\n" + "="*50
+  puts "AIRTABLE PROJECTS SEEDING COMPLETE"
+  puts "="*50
+  puts "Created #{created_projects_count} new projects"
+  puts "Updated #{updated_projects_count} existing projects"  
+  puts "Created #{created_users_count} new users"
+  puts "All projects are marked as 'submitted'"
+end
+
+puts "\nFinished seeding projects from Airtable!"
+
+# Now sync images in parallel for much better performance
+puts "\n🖼️  Syncing project images from Airtable (multithreaded)..."
+
+require 'concurrent-ruby'
+
+# Create lookup hash by airtable_record_id for O(1) lookups
+airtable_image_lookup = {}
+airtable_projects.each do |project_data|
+  if project_data[:airtable_record_id].present? && project_data[:thumbnail].present?
+    airtable_image_lookup[project_data[:airtable_record_id]] = project_data[:thumbnail]
+  end
+end
+
+puts "#{airtable_image_lookup.length} projects have images in Airtable"
+
+# Find projects that need images
+projects_needing_images = Project.where.missing(:image_attachment)
+                                 .where.not(airtable_record_id: nil)
+                                 .where(airtable_record_id: airtable_image_lookup.keys)
+
+puts "#{projects_needing_images.count} projects need images synced"
+
+if projects_needing_images.count > 0
+  # Thread-safe counters
+  success_count = Concurrent::AtomicFixnum.new(0)
+  failure_count = Concurrent::AtomicFixnum.new(0)
+  skipped_count = Concurrent::AtomicFixnum.new(0)
+
+  # Thread pool for downloading images
+  thread_pool_size = 32
+  puts "Using #{thread_pool_size} threads for concurrent downloads..."
+
+  # Process projects in batches with threads
+  projects_needing_images.find_in_batches(batch_size: 50) do |batch|
+    threads = []
+    
+    batch.each do |project|
+      thread = Thread.new do
+        begin
+          thumbnail_data_array = airtable_image_lookup[project.airtable_record_id]
+          
+          unless thumbnail_data_array.is_a?(Array) && !thumbnail_data_array.empty?
+            skipped_count.increment
+            next
+          end
+          
+          thumbnail_data = thumbnail_data_array.first
+          unless thumbnail_data['url'].present?
+            skipped_count.increment
+            next
+          end
+          
+          require 'open-uri'
+          
+          image_url = thumbnail_data['url']
+          filename = thumbnail_data['filename'] || 'thumbnail.png'
+          content_type = thumbnail_data['type'] || 'image/png'
+          file_size = thumbnail_data['size'] || 'unknown'
+          
+          puts "  📥 #{filename} for \"#{project.title}\" (#{file_size} bytes)"
+          
+          # Skip URL validations to prevent validation failures during image attachment
+          project.skip_url_validations = true
+          
+          # Download and attach the image
+          project.image.attach(
+            io: URI.open(image_url),
+            filename: filename,
+            content_type: content_type
+          )
+          
+          success_count.increment
+          
+        rescue => e
+          failure_count.increment
+          puts "  ❌ Failed: \"#{project.title}\" - #{e.message}"
+        end
+      end
+      
+      threads << thread
+      
+      # Limit concurrent threads
+      if threads.length >= thread_pool_size
+        threads.each(&:join)
+        threads.clear
+      end
+    end
+    
+    # Wait for remaining threads in this batch
+    threads.each(&:join)
+  end
+
+  puts "\n" + "="*60
+  puts "🎉 IMAGE SYNC COMPLETE"
+  puts "="*60
+  puts "✅ Successfully synced: #{success_count.value} images"
+  puts "⚠️  Skipped: #{skipped_count.value} projects"  
+  puts "❌ Failed: #{failure_count.value} projects"
+
+  # Verify final count
+  total_with_images = Project.joins(:image_attachment).count
+  puts "\n📊 Total projects with images: #{total_with_images}"
+  puts "📊 Coverage: #{(total_with_images.to_f / Project.count * 100).round(1)}%"
+else
+  puts "All projects already have images!"
+end

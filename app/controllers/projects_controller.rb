@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :require_authentication, except: [:show_invite]
+  before_action :require_authentication, except: [:vote, :show_invite, :accept_invite, :reject_invite]
   before_action :set_project, only: [ :edit, :update, :review, :submit ]
 
   def select_role
@@ -68,23 +68,32 @@ class ProjectsController < ApplicationController
       redirect_to root_path and return
     end
 
-    # Check if user has a submitted project for this specific event
-    current_user_project = current_user.projects.joins(:creator_positions)
-                                      .where(attending_event: @event, aasm_state: :submitted)
-                                      .first
+    # If user is signed in, check if they have a submitted project for voting eligibility
+    if signed_in?
+      current_user_project = current_user.projects.joins(:creator_positions)
+                                        .where(attending_event: @event, aasm_state: :submitted)
+                                        .first
 
-    unless current_user_project
-      flash[:alert] = "You must have a submitted project for this event to vote"
-      redirect_to edit_project_path and return
+      unless current_user_project
+        flash[:alert] = "You must have a submitted project for this event to vote"
+        redirect_to edit_project_path and return
+      end
+
+      # Get submitted projects, excluding current user's projects
+      @projects = Project.where(attending_event: @event)
+                        .where(aasm_state: :submitted)
+                        .where.not(id: current_user.projects.pluck(:id))
+                        .includes(:users, :creator_positions)
+
+      @votes = current_user.votes.where(project: @projects)
+    else
+      # For anonymous users, show all submitted projects
+      @projects = Project.where(attending_event: @event)
+                        .where(aasm_state: :submitted)
+                        .includes(:users, :creator_positions)
+      @votes = []
     end
 
-    # Get submitted projects from the same event, excluding current user's projects
-    @projects = Project.where(attending_event: @event)
-                      .where(aasm_state: :submitted)
-                      .where.not(id: current_user.projects.pluck(:id))
-                      .includes(:users, :creator_positions)
-
-    @votes = current_user.votes.where(project: @projects)
     @voting_disabled_message = [
       "help voting open sooner by going around and helping others submit their project",
       "no time to explain: honk really loudly to unlock voting",

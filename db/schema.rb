@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_27_192436) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_27_200024) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -119,6 +119,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_192436) do
     t.datetime "submitted_at"
     t.integer "attending_event_id", null: false
     t.boolean "hidden", default: false, null: false
+    t.string "airtable_record_id"
+    t.datetime "last_synced_to_airtable_at"
+    t.index ["airtable_record_id"], name: "index_projects_on_airtable_record_id"
     t.index ["attending_event_id"], name: "index_projects_on_attending_event_id"
   end
 

@@ -20,33 +20,41 @@
       <div class="projects-list">
         <% @visible_projects.each do |project| %>
           <div class="project-card organize-project">
-            <div class="project-header">
-              <h4><%= project.title %></h4>
-              <div class="project-team">
-                by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+            <% if project.thumbnail %>
+              <div class="project-image">
+                <%= image_tag project.thumbnail, alt: project.title, class: "project-thumbnail" %>
               </div>
-              <div class="project-stats">
-                <span class="vote-count"><%= pluralize(project.votes.count, 'vote') %></span>
-                <span class="status-badge <%= project.aasm_state %>"><%= project.aasm_state.humanize %></span>
-              </div>
-            </div>
+            <% end %>
             
-            <div class="project-details">
-              <p><%= truncate(project.description, length: 200) %></p>
+            <div class="project-content">
+              <div class="project-header">
+                <h4><%= project.title %></h4>
+                <div class="project-team">
+                  by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+                </div>
+                <div class="project-stats">
+                  <span class="vote-count"><%= pluralize(project.votes.count, 'vote') %></span>
+                  <span class="status-badge <%= project.aasm_state %>"><%= project.aasm_state.humanize %></span>
+                </div>
+              </div>
               
-              <div class="project-links">
-                <%= link_to "Play", project.itchio_url, target: "_blank", class: "project-link" %>
-                <%= link_to "Code", project.repo_url, target: "_blank", class: "project-link" %>
+              <div class="project-details">
+                <p><%= truncate(project.description, length: 200) %></p>
+                
+                <div class="project-links">
+                  <%= link_to "Play", project.itchio_url, target: "_blank", class: "project-link" %>
+                  <%= link_to "Code", project.repo_url, target: "_blank", class: "project-link" %>
+                </div>
               </div>
-            </div>
-            
-            <div class="project-actions">
-              <%= link_to "Hide Project", organize_hide_project_path(@event, project), 
-                  method: :patch, 
-                  class: "btn btn-danger btn-sm",
-                  data: { 
-                    confirm: "Are you sure you want to hide this project? It will no longer be visible to voters." 
-                  } %>
+              
+              <div class="project-actions">
+                <%= link_to "Hide Project", organize_hide_project_path(@event, project), 
+                    method: :patch, 
+                    class: "btn btn-danger btn-sm",
+                    data: { 
+                      confirm: "Are you sure you want to hide this project? It will no longer be visible to voters." 
+                    } %>
+              </div>
             </div>
           </div>
         <% end %>
@@ -62,30 +70,38 @@
       <div class="projects-list">
         <% @hidden_projects.each do |project| %>
           <div class="project-card organize-project hidden-project">
-            <div class="project-header">
-              <h4><%= project.title %></h4>
-              <div class="project-team">
-                by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+            <% if project.thumbnail %>
+              <div class="project-image">
+                <%= image_tag project.thumbnail, alt: project.title, class: "project-thumbnail" %>
               </div>
-              <div class="project-stats">
-                <span class="vote-count"><%= pluralize(project.votes.count, 'vote') %></span>
-                <span class="status-badge hidden">Hidden</span>
-              </div>
-            </div>
+            <% end %>
             
-            <div class="project-details">
-              <p><%= truncate(project.description, length: 200) %></p>
+            <div class="project-content">
+              <div class="project-header">
+                <h4><%= project.title %></h4>
+                <div class="project-team">
+                  by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+                </div>
+                <div class="project-stats">
+                  <span class="vote-count"><%= pluralize(project.votes.count, 'vote') %></span>
+                  <span class="status-badge hidden">Hidden</span>
+                </div>
+              </div>
               
-              <div class="project-links">
-                <%= link_to "Play", project.itchio_url, target: "_blank", class: "project-link" %>
-                <%= link_to "Code", project.repo_url, target: "_blank", class: "project-link" %>
+              <div class="project-details">
+                <p><%= truncate(project.description, length: 200) %></p>
+                
+                <div class="project-links">
+                  <%= link_to "Play", project.itchio_url, target: "_blank", class: "project-link" %>
+                  <%= link_to "Code", project.repo_url, target: "_blank", class: "project-link" %>
+                </div>
               </div>
-            </div>
-            
-            <div class="project-actions">
-              <%= link_to "Unhide Project", organize_unhide_project_path(@event, project), 
-                  method: :patch, 
-                  class: "btn btn-success btn-sm" %>
+              
+              <div class="project-actions">
+                <%= link_to "Unhide Project", organize_unhide_project_path(@event, project), 
+                    method: :patch, 
+                    class: "btn btn-success btn-sm" %>
+              </div>
             </div>
           </div>
         <% end %>
@@ -102,6 +118,24 @@
   .organize-project {
     border-left: 4px solid #28a745;
     margin-bottom: 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .project-image {
+    flex-shrink: 0;
+  }
+  
+  .project-thumbnail {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .project-content {
+    flex: 1;
   }
   
   .organize-project.hidden-project {

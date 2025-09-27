@@ -11,10 +11,12 @@ class Project < ApplicationRecord
 
   validates :title, presence: true
   validates :description, presence: true
-  validates :itchio_url, presence: true
-  validates :repo_url, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }
-  validate :itchio_url_is_playable
-  validate :repo_url_is_accessible
+  validates :itchio_url, presence: true, unless: :skip_url_validations?
+  validates :repo_url, presence: true, unless: :skip_url_validations?
+  validates :repo_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }, unless: :skip_url_validations?
+  validates :itchio_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }, unless: :skip_url_validations?
+  validate :itchio_url_is_playable, unless: :skip_url_validations?
+  validate :repo_url_is_accessible, unless: :skip_url_validations?
   validate :image_is_valid_type
   validate :image_is_valid_size
 
@@ -44,6 +46,18 @@ class Project < ApplicationRecord
 
   def has_pending_invites?
     creator_position_invites.where("expires_at > ?", Time.current).exists?
+  end
+
+  def thumbnail
+    return unless image.attached?
+    image.variant(resize_to_fill: [300, 200])
+  end
+
+  # Allow skipping expensive URL validations during seeding
+  attr_accessor :skip_url_validations
+  
+  def skip_url_validations?
+    skip_url_validations == true
   end
   
   scope :visible, -> { where(hidden: false) }
