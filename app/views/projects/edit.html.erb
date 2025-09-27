@@ -45,6 +45,7 @@
 
         <div class="wide">
           <%= form.label :image, "Project Image" %>
+          <p>(This will be cropped to a ratio of 3:2)</p>
           <%= form.file_field :image, accept: "image/png,image/jpg,image/jpeg,image/gif,image/webp", disabled: @project.submitted? %>
         </div>
 

@@ -357,6 +357,16 @@ hr {
 .standard-form .wide input {
   width: 100%;
 }
+.standard-form .wide:has(input[type=file]):has(p) label {
+  display: inline;
+  width: max-content;
+}
+.standard-form .wide:has(input[type=file]) p {
+  display: inline;
+  width: max-content;
+  opacity: 0.5;
+  margin-left: 0.3rem;
+}
 .standard-form > .thin {
   grid-column: span 2;
 }
