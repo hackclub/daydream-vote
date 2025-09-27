@@ -26,6 +26,7 @@ production:
     adapter: postgresql
     url: <%= ENV['DATABASE_URL'] %>
     pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    sslmode: prefer
   cache:
     <<: *default
     database: storage/production_cache.sqlite3
