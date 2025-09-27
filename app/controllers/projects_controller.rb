@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
   before_action :require_authentication
-  before_action :set_project, only: [ :edit, :update, :review ]
+  before_action :set_project, only: [ :edit, :update, :review, :submit ]
 
   def select_role
   end
@@ -95,6 +95,12 @@ class ProjectsController < ApplicationController
   end
 
   def review
+  end
+
+  def submit
+    @project.mark_submitted!
+    flash[:notice] = "Project submitted successfully"
+    redirect_to edit_project_path
   end
 
   def update

@@ -12,7 +12,16 @@ class Project < ApplicationRecord
   validate :itchio_url_is_playable
   validate :repo_url_is_accessible
 
+  include AASM
 
+  aasm timestamps: true do
+    state :draft, initial: true
+    state :submitted
+
+    event :mark_submitted do
+      transitions from: :draft, to: :submitted
+    end
+  end
 
   def can_invite_collaborators?
     precheck&.passed?

@@ -18,7 +18,7 @@
         <div class="divider"></div>
         
         <% if signed_in? %>
-            <p>Welcome back, <strong><%= current_user.email %></strong>!</p>
+            <p>Welcome back, <strong><%= current_user.profile_datum.first_name %></strong>!</p>
             <%= button_to "Sign Out", session_path(current_user), method: :delete, data: { turbo_frame: "_top" } %>
         <% else %>
             <p class="email-caption">Enter your email to start:</p>
