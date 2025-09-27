@@ -327,7 +327,7 @@ hr {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 1rem 1rem;
-  max-width: 500px;
+  max-width: 600px;
   width: 100vw;
 }
 .standard-form .wide {
