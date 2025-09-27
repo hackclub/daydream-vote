@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  used: false
+  expires_at: 2025-09-26 22:08:51
+
+two:
+  user: two
+  used: false
+  expires_at: 2025-09-26 22:08:51

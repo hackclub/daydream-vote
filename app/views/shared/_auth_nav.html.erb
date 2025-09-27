@@ -1,0 +1,8 @@
+<%= turbo_frame_tag "auth_nav" do %>
+  <% if signed_in? %>
+    <%= current_user.email %>
+    <%= button_to "Sign Out", session_path(current_user), method: :delete, data: { turbo_frame: "_top" } %>
+  <% else %>
+    <%= link_to "Sign In", new_session_path, data: { turbo_frame: "_top" } %>
+  <% end %>
+<% end %>

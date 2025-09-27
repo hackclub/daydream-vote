@@ -1,0 +1,6 @@
+<h1>Sign In</h1>
+
+<%= form_with url: sessions_path, method: :post, local: true do |form| %>
+  <%= form.email_field :email, placeholder: "Enter your email", required: true %>
+  <%= form.submit "Send Login Link" %>
+<% end %>
