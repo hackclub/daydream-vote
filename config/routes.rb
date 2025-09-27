@@ -6,7 +6,8 @@ Rails.application.routes.draw do
   get "projects/vote"
   delete "projects/invites/:invite_id", to: "projects#delete_invite", as: :delete_project_invite
   resource :project, only: [ :edit, :update ] do
-    get "submit"
+    get "review"
+    post "submit", to: "projects#submit", as: :submit
   end
   resource :profile, only: [ :edit, :update ]
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?

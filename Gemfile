@@ -30,6 +30,10 @@ group :development do
   gem "letter_opener_web"
 end
 
+# for state
+gem "aasm"
+gem "after_commit_everywhere", "~> 1.0" 
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 

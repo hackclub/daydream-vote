@@ -1,0 +1,48 @@
+<% @progress = :submit %>
+
+<div class="main">
+  <div class="card big">
+    <h1>Review & Submit</h1>
+    <div style="width: 800px;"></div>
+
+      <% if @project.errors.any? %>
+        <div>
+          <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+          <ul>
+            <% @project.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <h3>Title</h3>
+      <p><%= @project.title %></p>
+
+      <h3>Description</h3>
+      <p><%= @project.description %></p>
+
+      <h3>Itch.io URL</h3>
+      <p><%= link_to @project.itchio_url, @project.itchio_url, target: "_blank" %></p>
+
+      <h3>Repository URL</h3>
+      <p><%= link_to @project.repo_url, @project.repo_url, target: "_blank" %></p>
+
+      <h3>Team Members</h3>
+      <ul>
+        <% @project.users.each do |user| %>
+          <li><%= user.email %> - <%= user.creator_positions.find_by(project: @project).role.humanize %></li>
+        <% end %>
+      </ul>
+
+      <div style="display: flex; flex-direction: row; justify-content: space-between">
+        <%= button_to edit_project_path, method: :get do %>
+          Make Changes
+        <% end %>
+
+        <%= button_to submit_project_path, method: :post do %>
+          Submit Project
+        <% end %>
+      </div>
+  </div>
+</div>
