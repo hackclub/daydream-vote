@@ -46,13 +46,11 @@ body {
 .main {
   max-width: 64rem;
   width: 100%;
-  min-height: 100vh;
   margin-inline: auto;
   display: flex;
   flex-direction: column;
   gap: 2rem;
   align-items: center;
-  width: max-content;
 }
 .main > .card {
   margin: 3rem 2rem;
@@ -217,7 +215,7 @@ hr {
   outline: none;
 }
 
-.progress-nav {
+.progress-nav:has(.progress-container) {
   padding: 2rem 0;
   margin-bottom: 2rem;
 }
@@ -447,6 +445,11 @@ hr {
   text-align: center;
 }
 
+.submit-button-elem.disabled, .inline-invite-btn.disabled {
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
 html, body {
   padding: 0px;
   margin: 0px;
@@ -461,7 +464,7 @@ html, body {
   justify-content: right;
   height: 1.25rem;
   width: calc(100% - 1.5rem);
-  position: static;
+  position: absolute;
   z-index: 1000;
   font-size: 1rem;
   opacity: 0.7;
@@ -851,4 +854,8 @@ html, body {
 
 .review-button {
   flex: 1;
+}
+
+.card.big:has(.email-form) {
+  margin-bottom: 5rem;
 }
