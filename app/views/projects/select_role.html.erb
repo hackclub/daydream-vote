@@ -2,16 +2,16 @@
 <p>How would you like to submit your project?</p>
 
 <div>
-  <%= link_to "I will submit the project for my group", "#", class: "project-role-option" %>
+  <%= link_to "I will submit the project for my group", edit_project_path, class: "project-role-option" %>
   <p>You'll create the project submission and can add team members later.</p>
 </div>
 
 <div>
-  <%= link_to "My team member will submit and add me", "#", class: "project-role-option" %>
+  <%= link_to "My team member will submit and add me", projects_wait_for_invite_path, class: "project-role-option" %>
   <p>Someone else on your team will create the submission and invite you to join.</p>
 </div>
 
 <div>
-  <%= link_to "I am solo", "#", class: "project-role-option" %>
+  <%= link_to "I am solo", edit_project_path, class: "project-role-option" %>
   <p>You're working on this project by yourself.</p>
 </div>

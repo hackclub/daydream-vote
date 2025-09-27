@@ -1,6 +1,6 @@
 <h1>Edit Project</h1>
 
-<%= form_with model: @project, url: project_path, method: :patch, local: true, multipart: true do |form| %>
+<%= form_with model: @project, url: project_path, method: :patch, local: true, multipart: true, data: { turbo: false } do |form| %>
   <% if @project.errors.any? %>
     <div>
       <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>

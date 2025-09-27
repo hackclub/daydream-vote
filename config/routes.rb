@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "projects/select_role"
+  get "projects/wait_for_invite"
   resource :project, only: [:edit, :update]
   resource :profile, only: [:edit, :update]
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?

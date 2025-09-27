@@ -5,6 +5,11 @@ class ProjectsController < ApplicationController
   def select_role
   end
   
+  def wait_for_invite
+    @pending_invites = CreatorPositionInvite.where(email: current_user.email)
+    @accepted_projects = current_user.projects.includes(:creator_positions)
+  end
+  
   def edit
   end
   

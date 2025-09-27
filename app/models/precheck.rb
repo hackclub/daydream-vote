@@ -9,6 +9,6 @@ class Precheck < ApplicationRecord
   
   def run_check!
     update!(status: :loading, message: "Running precheck...")
-    PrecheckProjectJob.perform_later(self)
+    PrecheckProjectJob.perform_now(self)
   end
 end

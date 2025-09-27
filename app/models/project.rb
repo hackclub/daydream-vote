@@ -7,8 +7,12 @@ class Project < ApplicationRecord
   
   validates :title, presence: true
   validates :description, presence: true
+  validates :itchio_url, presence: true
+  validates :repo_url, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "must be a valid URL" }
+  validate :itchio_url_is_playable
+  validate :repo_url_is_accessible
   
-  after_create :create_precheck, :run_precheck
+
   
   def can_invite_collaborators?
     precheck&.passed?
@@ -25,11 +29,19 @@ class Project < ApplicationRecord
   
   private
   
-  def create_precheck
-    build_precheck.save!
+  def itchio_url_is_playable
+    return if itchio_url.blank? # Let presence validation handle blank URLs
+    
+    unless ItchioChecker.playable?(itchio_url)
+      errors.add(:itchio_url, "does not appear to have a play button or may not be playable in browser")
+    end
   end
   
-  def run_precheck
-    precheck.run_check!
+  def repo_url_is_accessible
+    return if repo_url.blank? # Let presence validation handle blank URLs
+    
+    unless GitRepoChecker.accessible?(repo_url)
+      errors.add(:repo_url, "is not accessible or does not exist")
+    end
   end
 end
