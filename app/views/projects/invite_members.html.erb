@@ -13,16 +13,22 @@
       <div class="members-grid">
         <% 
           # Collect all members and invites
-          owner = [{ type: 'owner', email: current_user.email, role: 'Owner' }]
+          owner = [{ type: 'owner', email: current_user.email, role: 'Owner', status: current_user.profile_complete? ? 'profile_complete' : 'profile_incomplete' }]
           accepted_members = @project.users.where.not(id: current_user.id).map do |user|
-            { type: 'accepted', email: user.email, role: user.creator_positions.find_by(project: @project).role.humanize }
+            { 
+              type: 'accepted', 
+              email: user.email, 
+              role: user.creator_positions.find_by(project: @project).role.humanize,
+              status: user.profile_complete? ? 'profile_complete' : 'profile_incomplete'
+            }
           end
           pending_invites = @project.creator_position_invites.map do |invite|
             { 
               type: 'pending', 
               email: invite.email, 
               role: invite.expired? ? 'Collaborator (expired)' : 'Collaborator (<u>Invite Pending</u>)'.html_safe,
-              invite: invite
+              invite: invite,
+              status: 'pending'
             }
           end
           
@@ -35,7 +41,17 @@
           <div class="card light member-card">
             <% if member %>
               <div class="member-info">
-                <div class="member-email"><strong><%= member[:email] %></strong></div>
+                <div class="member-email">
+                  <strong><%= member[:email] %></strong>
+                  <% case member[:status] %>
+                  <% when 'profile_complete' %>
+                    <span style="color: #10b981; font-size: 0.8rem; margin-left: 0.5rem;">✓ Profile Complete</span>
+                  <% when 'profile_incomplete' %>
+                    <span style="color: #f59e0b; font-size: 0.8rem; margin-left: 0.5rem;">⚠ Profile Incomplete</span>
+                  <% when 'pending' %>
+                    <span style="color: #6b7280; font-size: 0.8rem; margin-left: 0.5rem;">⏳ Invitation Pending</span>
+                  <% end %>
+                </div>
                 <div class="member-role"><%= member[:role] %></div>
               </div>
               <% if member[:type] == 'pending' %>
@@ -65,17 +81,22 @@
       </div>
 
       <% has_pending_invites = @project.has_pending_invites? %>
+      <% incomplete_profiles = !@project.all_members_have_complete_profiles? %>
       <% if has_pending_invites %>
         <p class="pending-notice">
           <strong>Note:</strong> You must wait for all pending invites to be accepted before continuing.
+        </p>
+      <% elsif incomplete_profiles %>
+        <p class="pending-notice">
+          <strong>Note:</strong> All team members must complete their profiles before the project can be submitted.
         </p>
       <% end %>
     </div>
 
     <div
-      class="submit-wrapper<%= ' disabled-pending' if has_pending_invites %>"
+      class="submit-wrapper<%= ' disabled-pending' if has_pending_invites || incomplete_profiles %>"
     >
-      <%= link_to "Continue", review_project_path, class: "submit-button-elem #{"disabled" if @project.submitted?}" %>
+      <%= link_to "Continue", review_project_path, class: "submit-button-elem #{"disabled" if @project.submitted? || has_pending_invites || incomplete_profiles}" %>
       <img
         src="/button-clouds.svg" 
         alt="" 

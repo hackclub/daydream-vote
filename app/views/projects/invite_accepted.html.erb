@@ -37,11 +37,16 @@
       <h3 style="margin-bottom: 1rem;">Your Teammates</h3>
       <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem;">
         <% @project.users.each do |user| %>
-          <div style="background-color: #ffffff; padding: 0.5rem 1rem; border-radius: 9999px; border: 1px solid #E472AB; font-size: 0.9rem;">
+          <div style="background-color: #ffffff; padding: 0.5rem 1rem; border-radius: 9999px; border: 1px solid #E472AB; font-size: 0.9rem; position: relative;">
             <strong><%= user.email %></strong>
             <% creator_position = @project.creator_positions.find_by(user: user) %>
             <% if creator_position %>
               <span style="opacity: 0.6; margin-left: 0.25rem;">(<%= creator_position.role.humanize %>)</span>
+            <% end %>
+            <% if user.profile_complete? %>
+              <span style="color: #10b981; margin-left: 0.25rem; font-size: 0.8rem;">✓</span>
+            <% else %>
+              <span style="color: #f59e0b; margin-left: 0.25rem; font-size: 0.8rem;">⚠</span>
             <% end %>
           </div>
         <% end %>
@@ -49,6 +54,18 @@
     </div>
     <% end %>
     
+    <% unless current_user.profile_complete? %>
+    <div class="card light" style="padding: 0.75rem 1rem; border-left: 4px solid #f59e0b; background-color: #fef3c7;">
+      <div style="display: flex; align-items: center; gap: 1.25rem;">
+        <div style="font-size: 2rem;">⚠️</div>
+        <div>
+          <h4 style="margin: 0; font-size: 1.1rem; color: #92400e;">Complete Your Profile</h4>
+          <p style="margin: 0.25rem 0 0 0; font-size: 1rem; color: #92400e;">You need to complete your profile before the team can submit this project.</p>
+        </div>
+      </div>
+    </div>
+    <% end %>
+
     <div class="card light" style="padding: 0.5rem 1rem; border-left: 4px solid #E472AB;">
       <div style="display: flex; align-items: center; gap: 1.25rem;">
         <img src="/shirt.png" style="height: 4rem;" >
@@ -60,7 +77,11 @@
     </div>
 
     <div class="submit-wrapper" style="margin: 2rem auto;">
-      <%= link_to "Go to Project Dashboard", edit_project_path, class: "submit-button-elem" %>
+      <% if current_user.profile_complete? %>
+        <%= link_to "Go to Project Dashboard", edit_project_path, class: "submit-button-elem" %>
+      <% else %>
+        <%= link_to "Complete Your Profile", edit_profile_path, class: "submit-button-elem" %>
+      <% end %>
       <img src="/button-clouds.svg" alt="" class="submit-clouds">
     </div>
 

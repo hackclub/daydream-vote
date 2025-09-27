@@ -54,7 +54,14 @@
         <% @project.users.each do |user| %>
           <div class="card light member-card">
             <div class="member-info">
-              <div class="member-email"><strong><%= user.email %></strong></div>
+              <div class="member-email">
+                <strong><%= user.email %></strong>
+                <% if user.profile_complete? %>
+                  <span style="color: #10b981; font-size: 0.8rem; margin-left: 0.5rem;">✓ Profile Complete</span>
+                <% else %>
+                  <span style="color: #f59e0b; font-size: 0.8rem; margin-left: 0.5rem;">⚠ Profile Incomplete</span>
+                <% end %>
+              </div>
               <div class="member-role"><%= user.creator_positions.find_by(project: @project).role.humanize %></div>
             </div>
           </div>
@@ -64,12 +71,23 @@
 
 
     <% if @project.draft? %>
+      <% unless @project.can_be_submitted? %>
+        <p class="review-warning" style="color: #f59e0b;">
+          <strong>Cannot Submit Yet:</strong> 
+          <% if @project.has_pending_invites? %>
+            All pending invites must be accepted before submission.
+          <% elsif !@project.all_members_have_complete_profiles? %>
+            All team members must complete their profiles before submission.
+          <% end %>
+        </p>
+      <% end %>
+
       <p class="review-warning">Make sure this looks right, because once you press submit there's no going back!</p>
       <p class="review-shirt-notice">Once you submit, you'll be able to claim your T-shirt from the organizers!</p>
 
       <div class="wide">
         <div class="checkbox-option" style="margin-inline: auto; width: max-content; display: flex; align-items: start; justify-items: start; gap: 0.5rem">
-          <%= check_box_tag :attendance_verification, "true", false, { required: true } %>
+          <%= check_box_tag :attendance_verification, "true", false, { required: true, disabled: !@project.can_be_submitted? } %>
           <div style="max-width: 400px">
           <%= label_tag "attendance_verification", "I'm currently in-person at #{@project.attending_event.name.titleize} and I commit to being truthful in all information I provide." %>
           </div>
@@ -83,7 +101,7 @@
         </div>
         
         <div class="submit-wrapper review-button">
-          <%= button_to "Submit to #{@project.attending_event.name.titleize}", submit_project_path, class: "submit-button-elem" %>
+          <%= button_to "Submit to #{@project.attending_event.name.titleize}", submit_project_path, class: "submit-button-elem #{"disabled" unless @project.can_be_submitted?}", disabled: !@project.can_be_submitted? %>
           <img src="/button-clouds.svg" alt="" class="submit-clouds">
         </div>
       </div>

@@ -48,6 +48,14 @@ class Project < ApplicationRecord
     creator_position_invites.where("expires_at > ?", Time.current).exists?
   end
 
+  def all_members_have_complete_profiles?
+    users.all?(&:profile_complete?)
+  end
+
+  def can_be_submitted?
+    !has_pending_invites? && all_members_have_complete_profiles?
+  end
+
   def thumbnail
     return unless image.attached?
     image.variant(resize_to_fill: [300, 200])

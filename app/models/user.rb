@@ -11,6 +11,20 @@ class User < ApplicationRecord
 
   before_validation :normalize_email
 
+  def profile_complete?
+    profile_datum.present?
+  end
+
+  def invite_status_for_project(project)
+    creator_position = creator_positions.find_by(project: project)
+    if creator_position
+      profile_complete? ? :complete : :accepted_incomplete_profile
+    else
+      pending_invite = project.creator_position_invites.find_by(email: email)
+      pending_invite ? :invited : :not_invited
+    end
+  end
+
   def last_unlocked_step
     if projects.all? { |p| p.submitted? } && projects.any?
       :vote

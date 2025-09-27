@@ -189,39 +189,22 @@ class AirtableService
     return [] unless ENV["AIRTABLE_API_KEY"].present?
     return [] if projects.empty?
 
-    records_to_create = []
-    records_to_update = []
-
-    projects.each do |project|
+    records = projects.map do |project|
       record_data = project_to_airtable_fields(project)
       
       if project.airtable_record_id.present?
-        records_to_update << {
+        {
           id: project.airtable_record_id,
           fields: record_data
         }
       else
-        records_to_create << {
+        {
           fields: record_data
         }
       end
     end
 
-    results = []
-    
-    # Create new records
-    unless records_to_create.empty?
-      created_records = create_airtable_records(records_to_create)
-      results.concat(created_records)
-    end
-
-    # Update existing records  
-    unless records_to_update.empty?
-      updated_records = update_airtable_records(records_to_update)
-      results.concat(updated_records)
-    end
-
-    results
+    upsert_airtable_records(records)
   rescue => e
     Rails.logger.error "Airtable projects sync error: #{e.message}"
     []
@@ -297,6 +280,35 @@ class AirtableService
       data["records"] || []
     else
       Rails.logger.error "Airtable update error: #{response.code} - #{response.body}"
+      []
+    end
+  end
+
+  def self.upsert_airtable_records(records)
+    url = "https://api.airtable.com/v0/#{PROJECTS_BASE_ID}/#{PROJECTS_TABLE_ID}"
+    uri = URI(url)
+
+    payload = {
+      performUpsert: {
+        fieldsToMergeOn: ["project_id"]
+      },
+      records: records,
+      typecast: true
+    }
+
+    response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+      request = Net::HTTP::Patch.new(uri)
+      request["Authorization"] = "Bearer #{ENV['AIRTABLE_API_KEY']}"
+      request["Content-Type"] = "application/json"
+      request.body = payload.to_json
+      http.request(request)
+    end
+
+    if response.code == "200"
+      data = JSON.parse(response.body)
+      data["records"] || []
+    else
+      Rails.logger.error "Airtable upsert error: #{response.code} - #{response.body}"
       []
     end
   end

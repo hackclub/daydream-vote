@@ -260,6 +260,11 @@ class ProjectsController < ApplicationController
   end
 
   def submit
+    unless @project.can_be_submitted?
+      flash[:alert] = "Cannot submit project. All team members must have complete profiles and no pending invites."
+      redirect_to review_project_path and return
+    end
+
     @project.mark_submitted!
     flash[:notice] = "Project submitted successfully"
     redirect_to review_project_path
