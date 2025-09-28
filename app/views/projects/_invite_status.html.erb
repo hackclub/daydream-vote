@@ -18,7 +18,7 @@
           </div>
           <div class="invite-actions">
             <% unless invite.expired? %>
-              <%= link_to "Accept Invite", accept_invite_path(invite.token), class: "submit-button-elem small" %>
+              <%= link_to "Accept Invite", accept_invite_path(invite.token), class: "submit-button-elem small", data: { turbo_frame: "_top" } %>
             <% end %>
           </div>
         </div>
