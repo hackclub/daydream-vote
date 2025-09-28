@@ -32,14 +32,17 @@ class GitRepoChecker
   def check_github_repo(owner, repo)
     github_service = GithubProxyService.new
     
+    # Just check if repo exists by trying to get repository info
+    github_service.get_repository_info(owner, repo)
+    
     # Get languages to check if repo exists and has files (excluding txt & zip)
-    languages = github_service.get_repository_languages(owner, repo)
+    # languages = github_service.get_repository_languages(owner, repo)
     
     # If languages hash is empty, repo might only have txt/zip files or be empty
     # We'll consider it invalid if it has no code files
-    return false if languages.empty?
+    # return false if languages.empty?
     
-    # Repo exists and has code files
+    # Repo exists
     true
   rescue ArgumentError => e
     # API key missing, fall back to git ls-remote
