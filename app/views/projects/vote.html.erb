@@ -1,7 +1,7 @@
 <% @progress = :vote %>
 
 <div class="main">
-  <div class="card big">
+  <div class="card big" style="width: 100%">
 
     <h1>Vote!</h1>
 
@@ -34,75 +34,84 @@
     <% if @projects.any? %>
       <% if @event.voting_enabled? && signed_in? %>
         <%= form_for :project_votes, url: event_make_vote_selection_path(@event.name), method: :post, local: true, data: { turbo: false } do |form| %>
-          <div class="projects-list">
+          <div class="projects-grid">
             <% @projects.each do |project| %>
-              <div class="project-card">
-                <% if project.thumbnail %>
-                  <div class="project-image">
-                    <%= image_tag project.thumbnail, alt: project.title, class: "project-thumbnail" %>
+              <div class="card light game-card-wrapper">
+                <div class="card light game-card">
+                  <div class="game-image">
+                    <% if project.thumbnail %>
+                      <%= image_tag project.thumbnail, alt: project.title, class: "game-image-cover" %>
+                    <% end %>
                   </div>
-                <% end %>
-                
-                <div class="project-content">
-                  <div class="project-header">
-                    <h3><%= project.title %></h3>
-                    <div class="project-team">
+                  <div class="game-info">
+                    <h2><%= project.title %></h2>
+                    <div class="game-byline">
                       by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
                     </div>
-                  </div>
-                
-                  <div class="project-details">
                     <p><%= project.description %></p>
-                    
-                    <div class="project-links">
-                      <%= link_to "Play on Itch.io", project.itchio_url, target: "_blank", class: "project-link" %>
-                      <%= link_to "View Code", project.repo_url, target: "_blank", class: "project-link" %>
-                    </div>
                   </div>
                   
-                  <div class="voting-actions">
-                    <label class="vote-checkbox">
-                      <%= form.check_box project.id, checked: project.in?(@votes.map(&:project)) %>
-                      Vote for this project
-                    </label>
+                  <div class="game-card-buttons">
+                    <div class="submit-wrapper review-button">
+                      <%= link_to "View on Itch.io", project.itchio_url, target: "_blank", class: "submit-button-elem" %>
+                      <img src="/button-clouds.svg" alt="" class="submit-clouds">
+                    </div>
+                    
+                    <div class="submit-wrapper review-button">
+                      <%= link_to "View Git Repository", project.repo_url, target: "_blank", class: "submit-button-elem" %>
+                      <img src="/button-clouds.svg" alt="" class="submit-clouds">
+                    </div>
                   </div>
+                </div>
+                
+                <div class="project-vote-action">
+                  <label class="vote-checkbox">
+                    <%= form.check_box project.id, checked: project.in?(@votes.map(&:project)) %>
+                    Vote for this project
+                  </label>
                 </div>
               </div>
             <% end %>
           </div>
           
-          <div class="voting-form">
-            <button type="submit" class="btn btn-primary">Submit Votes</button>
+          <div class="actions" style="margin-top: 2rem;">
+            <div class="submit-wrapper">
+              <button type="submit" class="submit-button-elem" onclick="return confirm('Are you sure you want to submit your votes? This cannot be undone.')">Submit Votes</button>
+              <img src="/button-clouds.svg" alt="" class="submit-clouds">
+            </div>
           </div>
         <% end %>
       <% else %>
-        <div class="projects-list">
+        <div class="projects-grid">
           <% @projects.each do |project| %>
-            <div class="project-card">
-              <% if project.thumbnail %>
-                <div class="project-image">
-                  <%= image_tag project.thumbnail, alt: project.title, class: "project-thumbnail" %>
-                </div>
-              <% end %>
-              
-              <div class="project-content">
-                <div class="project-header">
-                  <h3><%= project.title %></h3>
-                  <div class="project-team">
-                    by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
-                  </div>
-                </div>
-              
-                <div class="project-details">
-                  <p><%= project.description %></p>
-                  
-                  <% if @event.voting_enabled? %>
-                    <div class="project-links">
-                      <%= link_to "Play on Itch.io", project.itchio_url, target: "_blank", class: "project-link" %>
-                      <%= link_to "View Code", project.repo_url, target: "_blank", class: "project-link" %>
-                    </div>
+            <div class="card light game-card-wrapper">
+              <div class="card light game-card">
+                <div class="game-image">
+                  <% if project.thumbnail %>
+                    <%= image_tag project.thumbnail, alt: project.title, class: "game-image-cover" %>
                   <% end %>
                 </div>
+                <div class="game-info">
+                  <h2><%= project.title %></h2>
+                  <div class="game-byline">
+                    by <%= project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+                  </div>
+                  <p><%= project.description %></p>
+                </div>
+                
+                <% if @event.voting_enabled? %>
+                  <div class="game-card-buttons">
+                    <div class="submit-wrapper review-button">
+                      <%= link_to "View on Itch.io", project.itchio_url, target: "_blank", class: "submit-button-elem" %>
+                      <img src="/button-clouds.svg" alt="" class="submit-clouds">
+                    </div>
+                    
+                    <div class="submit-wrapper review-button">
+                      <%= link_to "View Git Repository", project.repo_url, target: "_blank", class: "submit-button-elem" %>
+                      <img src="/button-clouds.svg" alt="" class="submit-clouds">
+                    </div>
+                  </div>
+                <% end %>
               </div>
             </div>
           <% end %>
@@ -110,57 +119,17 @@
       <% end %>
     <% end %>
 
-    <div class="actions" style="margin-top: 2rem;">
-      <div class="submit-wrapper">
-        <% if !signed_in? %>
-          <%= link_to "Sign in", new_session_path, class: "submit-button-elem" %>
-        <% else %>
-          <%= link_to "Back to Team Setup", projects_invite_members_path, class: "submit-button-elem" %>
-        <% end %>
-        <img src="/button-clouds.svg" alt="" class="submit-clouds">
+    <% unless @event.voting_enabled? && signed_in? %>
+      <div class="actions" style="margin-top: 2rem;">
+        <div class="submit-wrapper">
+          <% if !signed_in? %>
+            <%= link_to "Sign in", new_session_path, class: "submit-button-elem" %>
+          <% else %>
+            <%= link_to "Back to Team Setup", projects_invite_members_path, class: "submit-button-elem" %>
+          <% end %>
+          <img src="/button-clouds.svg" alt="" class="submit-clouds">
+        </div>
       </div>
-    </div>
+    <% end %>
   </div>
 </div>
-
-<style>
-  .project-card {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .project-image {
-    flex-shrink: 0;
-  }
-  
-  .project-thumbnail {
-    width: 200px;
-    height: 133px;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  
-  .project-content {
-    flex: 1;
-  }
-  
-  .voting-actions {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
-  }
-  
-  .vote-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  
-  .vote-checkbox input[type="checkbox"] {
-    transform: scale(1.2);
-  }
-</style>

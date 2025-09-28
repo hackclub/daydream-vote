@@ -462,7 +462,6 @@ hr {
   color: white !important;
   border-radius: 9999px;
   text-decoration: none;
-  font-family: 'Atkinson Hyperlegible', sans-serif;
   cursor: pointer;
   margin: 1rem auto;
   position: relative;
@@ -471,6 +470,10 @@ hr {
   grid-column: span 6 !important;
   margin-bottom: -3rem;
   max-width: 300px;
+}
+.submit-wrapper button {
+  font-family: 'Atkinson Hyperlegible', sans-serif !important;
+  width: 100%;
 }
 .submit-wrapper:hover {
   box-shadow: 0 2px 0 0 #A65A80;
@@ -804,20 +807,13 @@ html, body {
   display: flex;
 }
 .vote-checkbox {
-  padding: 0.5rem 2rem;
   width: 100%;
   display: flex;
-  border-top: 2px solid #4477A3;
   cursor: pointer;
-
 }
-
-.vote-checkbox:has(input:checked) {
-  background:#4477A3;
-  color: white;
-  max-width: 32rem;
+.vote-checkbox label {
+  transform: translateX(-1rem);
 }
-
 .card.game-card {
   display: flex;
   flex-direction: column;
@@ -833,11 +829,11 @@ html, body {
 
 .game-image {
   width: 300px;
-  height: auto;
-  aspect-ratio: 3 / 2;
+  height: 200px;
   position: relative;
   overflow: hidden;
   border-bottom: 2px solid #e9d8b9;
+  flex-shrink: 0;
 }
 
 .game-image-cover {
@@ -852,7 +848,7 @@ html, body {
 
 .game-info h2 {
   text-align: left;
-  margin: 0.75rem 1rem;
+  margin: 0.75rem 1rem 0.25rem 1rem;
   font-size: 1.5rem;
   font-family: 'Atkinson Hyperlegible', sans-serif;
 }
@@ -866,6 +862,8 @@ html, body {
 .game-byline {
   font-style: italic;
   font-size: 1rem !important;
+  margin-left: 1rem;
+  margin-bottom: 0.5rem;
   opacity: 0.8;
 }
 
@@ -1104,4 +1102,64 @@ html, body {
 input[disabled], textarea[disabled], select[disabled] {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.project-vote-action {
+  text-align: center;
+  padding: 2.5rem;
+  padding-bottom: 0;
+  flex: 1;
+}
+
+.vote-checkbox {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1.1rem;
+  border: none;
+  height: calc(100% - 1rem);
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.vote-checkbox input[type="checkbox"] {
+  accent-color: #E472AB;
+  cursor: pointer;
+}
+
+.vote-checkbox:hover {
+  color: #E472AB;
+}
+
+.game-card-wrapper:has(.vote-checkbox) {
+  border-width: 2px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+.game-card-wrapper:has(.vote-checkbox) .game-card {
+  z-index: 1;
+  height: 100%;
+}
+.game-card-wrapper:has(.vote-checkbox) .game-info {
+  height: 100%;
+}
+
+
+.game-card-wrapper:has(.vote-checkbox > input:checked) {
+  background: #d2ffd3 !important;
+  border: 2px solid #b9e9bb;
 }
