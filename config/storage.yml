@@ -4,7 +4,11 @@ test:
 
 local:
   service: Disk
-  root: <%= Rails.root.join("storage") %>
+  root: <%= Rails.root.join("local_file_uploads") %>
+
+prod_local:
+  service: Disk
+  root: '/file_uploads'
 
 cloudflare:
   service: S3
@@ -13,9 +17,9 @@ cloudflare:
   secret_access_key: <%= ENV['CLOUDFLARE_SECRET_ACCESS_KEY'] %>
   region: auto
   bucket: <%= ENV['CLOUDFLARE_BUCKET'] %>
-  http_open_timeout: 0
-  http_read_timeout: 0
-  retry_limit: 0
+  # http_open_timeout: 0
+  # http_read_timeout: 0
+  # retry_limit: 0
   request_checksum_calculation: "when_required"
   response_checksum_validation: "when_required"
 
