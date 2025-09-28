@@ -39,7 +39,7 @@
 
         <div class="wide">
           <%= form.label :attending_event, "Which daydream Event is this project for?" %>
-          <%= form.collection_select :attending_event_id, Event.order(:name), :id, :name,
+          <%= form.collection_select :attending_event_id, Event.order(:name), :id, ->(event) { event.humanized_name || event.name },
               { prompt: "Select an event...", selected: @project.attending_event_id } %>
         </div>
 
