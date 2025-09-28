@@ -24,6 +24,9 @@
         </div>
         <div class="game-info">
           <h2><%= @project.title %></h2>
+          <div class="game-byline">
+            by <%= @project.users.map { |user| user&.profile_datum&.first_name || user&.email }.flatten.join(", ") %>
+          </div>
           <p><%= @project.description %></p>
         </div>
         
