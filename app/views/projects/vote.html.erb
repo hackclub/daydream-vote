@@ -6,9 +6,14 @@
     <h1>Vote!</h1>
 
     <% if !@event.voting_enabled? %>
+      <% votes_exist = Vote.joins(:project).where(projects: { attending_event: @event }).exists? %>
       <div class="alert alert-info">
-        <p><strong>Voting is not turned on by the organizers yet</strong></p>
-        <p><%= @voting_disabled_message %></p>
+        <% if votes_exist %>
+          <p><strong>Voting has ended</strong></p>
+        <% else %>
+          <p><strong>Voting is not turned on by the organizers yet</strong></p>
+          <p><%= @voting_disabled_message %></p>
+        <% end %>
       </div>
     <% elsif !signed_in? %>
       <div class="alert alert-info">
