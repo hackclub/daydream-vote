@@ -84,6 +84,7 @@ class ProjectsController < ApplicationController
                         .where(aasm_state: :submitted)
                         .where.not(id: current_user.projects.pluck(:id))
                         .includes(:users, :creator_positions)
+                        .order('RANDOM()')
 
       @votes = current_user.votes.where(project: @projects)
     else
@@ -91,6 +92,7 @@ class ProjectsController < ApplicationController
       @projects = Project.where(attending_event: @event)
                         .where(aasm_state: :submitted)
                         .includes(:users, :creator_positions)
+                        .order('RANDOM()')
       @votes = []
     end
 

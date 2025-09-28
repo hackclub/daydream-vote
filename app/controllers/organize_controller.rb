@@ -4,9 +4,14 @@ class OrganizeController < ApplicationController
   before_action :ensure_organizer!
 
   def index
-    @projects = @event.projects.includes(:users, :votes).order(:created_at)
-    @visible_projects = @projects.visible
-    @hidden_projects = @projects.hidden
+    @projects = @event.projects.includes(:users, :votes)
+    # Sort by vote count (highest first), then by creation date
+    @visible_projects = @projects.visible.left_joins(:votes)
+                                        .group('projects.id')
+                                        .order('COUNT(votes.id) DESC, projects.created_at ASC')
+    @hidden_projects = @projects.hidden.left_joins(:votes)
+                                       .group('projects.id')
+                                       .order('COUNT(votes.id) DESC, projects.created_at ASC')
   end
 
   def hide_project
