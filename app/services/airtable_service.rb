@@ -8,6 +8,8 @@ class AirtableService
   CONFIRMED_EVENTS_TABLE_ID = "tbl4a18NRx3I4qGPu"
   PROJECTS_BASE_ID = "appRHzPloxM3u4hUA"
   PROJECTS_TABLE_ID = "tblYNkpmgpAdZBV2I"
+  ATTENDEES_BASE_ID = "appRHzPloxM3u4hUA"
+  ATTENDEES_TABLE_ID = "tbl7rZK72iqV3h9Jm"
   
   def self.find_profile_by_email(email)
     return nil unless ENV["AIRTABLE_API_KEY"].present?
@@ -37,6 +39,12 @@ class AirtableService
     return [] unless ENV["AIRTABLE_API_KEY"].present?
     
     fetch_all_projects_from_api
+  end
+
+  def self.fetch_all_attendees_from_airtable(max_records: nil)
+    return [] unless ENV["AIRTABLE_API_KEY"].present?
+    
+    fetch_all_attendees_from_api(max_records: max_records)
   end
   
   def self.fetch_all_events
@@ -371,6 +379,68 @@ class AirtableService
     all_records
   rescue => e
     Rails.logger.error "Airtable projects fetch error: #{e.message}"
+    []
+  end
+
+  def self.fetch_all_attendees_from_api(max_records: nil)
+    all_records = []
+    offset = nil
+    
+    loop do
+      url = "https://api.airtable.com/v0/#{ATTENDEES_BASE_ID}/#{ATTENDEES_TABLE_ID}"
+      uri = URI(url)
+      
+      # Build query parameters
+      params = {}
+      params[:offset] = offset if offset
+      params[:maxRecords] = max_records if max_records
+      
+      if params.any?
+        uri.query = URI.encode_www_form(params)
+      end
+      
+      response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+        request = Net::HTTP::Get.new(uri)
+        request["Authorization"] = "Bearer #{ENV['AIRTABLE_API_KEY']}"
+        http.request(request)
+      end
+      
+      if response.code == "200"
+        data = JSON.parse(response.body)
+        records = data["records"]
+        
+        # Add records to our collection with all field data
+        page_records = records.map do |record|
+          fields = record["fields"]
+          result = { airtable_record_id: record["id"] }
+          
+          # Add all fields dynamically
+          fields.each do |key, value|
+            result[key.to_sym] = value
+          end
+          
+          result
+        end
+        
+        all_records.concat(page_records)
+        
+        # If we have maxRecords set, just return first batch for testing
+        if max_records
+          break
+        end
+        
+        # Check if there are more pages
+        offset = data["offset"]
+        break unless offset
+      else
+        Rails.logger.error "Airtable Attendees API error: #{response.code} - #{response.body}"
+        break
+      end
+    end
+    
+    all_records
+  rescue => e
+    Rails.logger.error "Airtable attendees fetch error: #{e.message}"
     []
   end
 end

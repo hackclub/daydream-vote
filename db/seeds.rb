@@ -218,6 +218,34 @@ end
 
 puts "Finished seeding events!"
 
+return if Rails.env.production?
+
+# Load attendee data from Airtable for profile information
+puts "\nFetching attendee data from Airtable for profiles..."
+cache_file = Rails.root.join('tmp', 'cache', 'airtable_attendees.json')
+FileUtils.mkdir_p(File.dirname(cache_file))
+
+if File.exist?(cache_file) && File.mtime(cache_file) > 1.hour.ago
+  puts "Loading attendee data from cache..."
+  airtable_attendees = JSON.parse(File.read(cache_file), symbolize_names: true)
+else
+  puts "Fetching fresh attendee data from Airtable..."
+  airtable_attendees = AirtableService.fetch_all_attendees_from_airtable
+  File.write(cache_file, JSON.pretty_generate(airtable_attendees))
+  puts "Cached attendee data to #{cache_file}"
+end
+
+puts "Found #{airtable_attendees.length} attendees in Airtable"
+
+# Create attendee lookup by email
+attendee_by_email = {}
+airtable_attendees.each do |attendee|
+  if attendee[:email].present?
+    attendee_by_email[attendee[:email].downcase] = attendee
+  end
+end
+puts "Created lookup for #{attendee_by_email.length} attendees with emails"
+
 # Load all projects from Airtable
 puts "\nFetching projects from Airtable..."
 airtable_projects = AirtableService.fetch_all_projects_from_airtable
@@ -250,6 +278,33 @@ else
     primary_user = User.find_or_create_by!(email: project_data[:email].downcase) do |user|
       puts "  ✓ Creating user: #{project_data[:email]}"
       created_users_count += 1
+    end
+    
+    # Create or update profile data from attendee information
+    if attendee_by_email.key?(primary_user.email.downcase)
+      attendee_data = attendee_by_email[primary_user.email.downcase]
+      
+      # Create profile_datum if it doesn't exist
+      unless primary_user.profile_datum
+        profile_attrs = {
+          first_name: attendee_data[:first_name],
+          last_name: attendee_data[:last_name],
+          dob: attendee_data[:dob] ? Date.parse(attendee_data[:dob]) : nil,
+          address_line_1: attendee_data[:address_1],
+          address_line_2: attendee_data[:address_2],
+          address_city: attendee_data[:city],
+          address_state: attendee_data[:state],
+          address_zip_code: attendee_data[:zip_code],
+          address_country: attendee_data[:country]
+        }.compact
+        
+        primary_user.create_profile_datum!(profile_attrs)
+        puts "    ✓ Created profile data for #{primary_user.email}"
+      else
+        puts "    ✓ Profile data already exists for #{primary_user.email}"
+      end
+    else
+      puts "    ✗ No attendee data found for #{primary_user.email}"
     end
     
     # Find the associated event by organizer email
@@ -331,6 +386,28 @@ else
       teammate_user = User.find_or_create_by!(email: teammate_email.downcase) do |user|
         puts "    ✓ Creating teammate user: #{teammate_email}"
         created_users_count += 1
+      end
+      
+      # Create profile data for teammate if available
+      if attendee_by_email.key?(teammate_user.email.downcase)
+        attendee_data = attendee_by_email[teammate_user.email.downcase]
+        
+        unless teammate_user.profile_datum
+          profile_attrs = {
+            first_name: attendee_data[:first_name],
+            last_name: attendee_data[:last_name],
+            dob: attendee_data[:dob] ? Date.parse(attendee_data[:dob]) : nil,
+            address_line_1: attendee_data[:address_1],
+            address_line_2: attendee_data[:address_2],
+            address_city: attendee_data[:city],
+            address_state: attendee_data[:state],
+            address_zip_code: attendee_data[:zip_code],
+            address_country: attendee_data[:country]
+          }.compact
+          
+          teammate_user.create_profile_datum!(profile_attrs)
+          puts "      ✓ Created profile data for teammate #{teammate_user.email}"
+        end
       end
       
       # Create collaborator position if not exists
