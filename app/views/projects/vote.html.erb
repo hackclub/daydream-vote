@@ -12,9 +12,7 @@
       </div>
     <% elsif !signed_in? %>
       <div class="alert alert-info">
-        <p><strong>Sign in to vote</strong></p>
         <p>You must be signed in and have a submitted project to vote.</p>
-        <%= link_to "Sign in", new_session_path, class: "btn btn-primary" %>
       </div>
     <% else %>
       <p><strong>Choose the top 3 projects to award prizes</strong></p>
@@ -84,7 +82,11 @@
 
     <div class="actions" style="margin-top: 2rem;">
       <div class="submit-wrapper">
-        <%= link_to "Back to Team Setup", projects_invite_members_path, class: "submit-button-elem" %>
+        <% if !signed_in? %>
+          <%= link_to "Sign in", new_session_path, class: "submit-button-elem" %>
+        <% else %>
+          <%= link_to "Back to Team Setup", projects_invite_members_path, class: "submit-button-elem" %>
+        <% end %>
         <img src="/button-clouds.svg" alt="" class="submit-clouds">
       </div>
     </div>
