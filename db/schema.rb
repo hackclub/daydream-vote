@@ -11,6 +11,9 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.0].define(version: 2025_09_27_200024) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -40,20 +43,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_200024) do
   end
 
   create_table "creator_position_invites", force: :cascade do |t|
-    t.integer "project_id", null: false
+    t.bigint "project_id", null: false
     t.string "email"
     t.string "token"
     t.datetime "expires_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "invited_by_id", null: false
+    t.bigint "invited_by_id", null: false
     t.index ["invited_by_id"], name: "index_creator_position_invites_on_invited_by_id"
     t.index ["project_id"], name: "index_creator_position_invites_on_project_id"
   end
 
   create_table "creator_positions", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "project_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "role", default: 1, null: false
@@ -74,8 +77,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_200024) do
   end
 
   create_table "organizer_positions", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "event_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "event_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_organizer_positions_on_event_id"
@@ -84,7 +87,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_200024) do
   end
 
   create_table "prechecks", force: :cascade do |t|
-    t.integer "project_id", null: false
+    t.bigint "project_id", null: false
     t.integer "status"
     t.text "message"
     t.datetime "created_at", null: false
@@ -93,7 +96,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_200024) do
   end
 
   create_table "profile_data", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.string "first_name"
     t.string "last_name"
     t.date "dob"
@@ -117,7 +120,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_200024) do
     t.datetime "updated_at", null: false
     t.string "aasm_state"
     t.datetime "submitted_at"
-    t.integer "attending_event_id", null: false
+    t.bigint "attending_event_id", null: false
     t.boolean "hidden", default: false, null: false
     t.string "airtable_record_id"
     t.datetime "last_synced_to_airtable_at"
@@ -144,8 +147,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_27_200024) do
   end
 
   create_table "votes", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "project_id"
+    t.bigint "user_id"
+    t.bigint "project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_votes_on_project_id"
