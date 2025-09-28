@@ -15,7 +15,7 @@ class ProfilesController < ApplicationController
         redirect_to projects_select_role_path
       end
     else
-      flash.now[:alert] = "Please fix the errors below"
+      flash.now[:alert] = "Please fix these problems"
       render :edit
     end
   end

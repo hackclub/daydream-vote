@@ -45,7 +45,7 @@
     </div>
 
     <p style="text-align: center; margin-top: -0.5rem; margin-bottom: 2rem; margin-inline: auto; max-width: 400px;">
-      This is exactly how your game will appear in <%= @project.attending_event.name.titleize %> voting <em>and</em> global voting.
+      This is exactly how your game will appear in <%= @project.attending_event.humanized_name %> voting <em>and</em> global voting.
     </p>
 
     <div class="external-links">
@@ -95,7 +95,7 @@
         <div class="checkbox-option" style="margin-inline: auto; width: max-content; display: flex; align-items: start; justify-items: start; gap: 0.5rem">
           <%= check_box_tag :attendance_verification, "true", false, { required: true, disabled: !@project.can_be_submitted? } %>
           <div style="max-width: 400px">
-          <%= label_tag "attendance_verification", "I'm currently in-person at #{@project.attending_event.name.titleize} and I commit to being truthful in all information I provide." %>
+          <%= label_tag "attendance_verification", "I'm currently in-person at #{@project.attending_event.humanized_name} and I commit to being truthful in all information I provide." %>
           </div>
         </div>
       </div>
@@ -107,7 +107,7 @@
         </div>
         
         <div class="submit-wrapper review-button">
-          <%= button_to "Submit to #{@project.attending_event.name.titleize}", submit_project_path, class: "submit-button-elem #{"disabled" unless @project.can_be_submitted?}", disabled: !@project.can_be_submitted? %>
+          <%= button_to "Submit to #{@project.attending_event.humanized_name}", submit_project_path, class: "submit-button-elem #{"disabled" unless @project.can_be_submitted?}", disabled: !@project.can_be_submitted? %>
           <img src="/button-clouds.svg" alt="" class="submit-clouds">
         </div>
       </div>

@@ -282,7 +282,7 @@ class ProjectsController < ApplicationController
         flash[:notice] = "Project created successfully"
         redirect_to projects_invite_members_path
       else
-        flash.now[:alert] = "Please fix the errors below"
+        flash.now[:alert] = "Please fix these problems"
         render :edit
       end
     else
@@ -295,7 +295,7 @@ class ProjectsController < ApplicationController
         flash[:notice] = "Project updated successfully"
         redirect_to projects_invite_members_path
       else
-        flash.now[:alert] = "Please fix the errors below"
+        flash.now[:alert] = "Please fix these problems"
         render :edit
       end
     end

@@ -248,6 +248,9 @@ hr {
   display: flex;
   justify-content: center;
 }
+.progress-step:not(.active) + * + .progress-step:not(.active) {
+  pointer-events: none;
+}
 
 .step-circle {
   width: 16px;
